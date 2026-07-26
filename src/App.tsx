@@ -8,6 +8,7 @@ import { CoursePlayerPage } from "./pages/CoursePlayerPage";
 import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { QuizPage } from "./pages/QuizPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { StudentDashboardPage } from "./pages/StudentDashboardPage";
 
@@ -35,6 +36,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <CoursePlayerPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/learn/:courseId/quiz"
+              element={
+                <ProtectedRoute>
+                  <QuizPage />
                 </ProtectedRoute>
               }
             />

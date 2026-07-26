@@ -14,6 +14,7 @@ import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { useAuth } from "../context/AuthContext";
+import { usePlatformSettings } from "../context/PlatformSettingsContext";
 import { adminGetPlatformSettings, adminSavePlatformSettings } from "../lib/adminApi";
 import type { AdminSavePlatformSettingsPayload, PlatformSettings } from "../types/admin";
 
@@ -30,6 +31,7 @@ const emptySettings: AdminSavePlatformSettingsPayload = {
 
 export function AdminSettingsPage() {
   const { sessionToken } = useAuth();
+  const { refreshSettings } = usePlatformSettings();
   const [settings, setSettings] = useState<AdminSavePlatformSettingsPayload>(emptySettings);
   const [savedSettings, setSavedSettings] = useState<PlatformSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -137,6 +139,7 @@ export function AdminSettingsPage() {
         securityNotice: response.data.settings.securityNotice,
       });
       setNotice("Platform settings saved.");
+      await refreshSettings();
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "Settings could not be saved.");
     } finally {

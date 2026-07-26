@@ -36,6 +36,8 @@ jobs:
 
       - name: Build application
         run: npm run build
+        env:
+          VITE_APPS_SCRIPT_API_URL: ${{ vars.VITE_APPS_SCRIPT_API_URL }}
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5

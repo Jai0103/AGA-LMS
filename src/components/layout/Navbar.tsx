@@ -1,4 +1,4 @@
-import { ArrowRight, Award, GraduationCap, LayoutDashboard, LogOut, UserCircle } from "lucide-react";
+import { ArrowRight, Award, GraduationCap, LayoutDashboard, LogOut, ShieldCheck, UserCircle } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { appConfig } from "../../config/app.config";
 import { publicNavigation, routes } from "../../config/routes";
@@ -49,7 +49,15 @@ export function Navbar() {
                 Certificates
               </Button>
             </Link>
-            <div className="hidden items-center gap-2 rounded-lg border border-line bg-slate-50 px-3 py-2 lg:flex">
+            {user.role === "ADMIN" ? (
+              <Link to={routes.admin} className="hidden lg:inline-flex">
+                <Button variant="secondary">
+                  <ShieldCheck size={16} aria-hidden="true" />
+                  Admin
+                </Button>
+              </Link>
+            ) : null}
+            <div className="hidden items-center gap-2 rounded-lg border border-line bg-slate-50 px-3 py-2 xl:flex">
               <UserCircle size={17} aria-hidden="true" />
               <span className="text-sm font-bold text-slate-700">{user.fullName}</span>
             </div>

@@ -1,9 +1,10 @@
-import type { AuthUser } from "./auth";
+import { apiRequest } from "./apiClient";
+import type { UpdateMyProfileData, UpdateMyProfilePayload } from "../types/profile";
 
-export type UpdateMyProfilePayload = {
-  fullName: string;
-};
-
-export type UpdateMyProfileData = {
-  user: AuthUser;
-};
+export function updateMyProfile(payload: UpdateMyProfilePayload, sessionToken: string) {
+  return apiRequest<UpdateMyProfileData, UpdateMyProfilePayload>(
+    "updateMyProfile",
+    payload,
+    sessionToken,
+  );
+}

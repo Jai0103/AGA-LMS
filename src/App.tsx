@@ -18,6 +18,7 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { QuizPage } from "./pages/QuizPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { StudentDashboardPage } from "./pages/StudentDashboardPage";
+import { AdminLessonsPage } from "./pages/AdminLessonsPage";
 
 function App() {
   return (
@@ -75,7 +76,14 @@ function App() {
                 </ProtectedRoute>
               }
             />
-
+            <Route
+  path="/admin/courses/:courseId/lessons"
+  element={
+    <ProtectedRoute allowedRoles={["ADMIN"]}>
+      <AdminLessonsPage />
+    </ProtectedRoute>
+  }
+/>
             <Route
               path="/admin/users"
               element={

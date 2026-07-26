@@ -33,13 +33,15 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Button variant="ghost" className="hidden sm:inline-flex">
-            Log in
-          </Button>
-          <Button variant="dark">
-            Get started
-            <ArrowRight size={16} aria-hidden="true" />
-          </Button>
+          <Link to="/login" className="hidden sm:inline-flex">
+            <Button variant="ghost">Log in</Button>
+          </Link>
+          <Link to="/register">
+            <Button variant="dark">
+              Get started
+              <ArrowRight size={16} aria-hidden="true" />
+            </Button>
+          </Link>
         </div>
       </div>
     </header>

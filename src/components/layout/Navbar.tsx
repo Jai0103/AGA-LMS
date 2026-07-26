@@ -1,4 +1,4 @@
-import { ArrowRight, GraduationCap, LayoutDashboard, LogOut, UserCircle } from "lucide-react";
+import { ArrowRight, Award, GraduationCap, LayoutDashboard, LogOut, UserCircle } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { appConfig } from "../../config/app.config";
 import { publicNavigation, routes } from "../../config/routes";
@@ -41,6 +41,12 @@ export function Navbar() {
               <Button variant="secondary">
                 <LayoutDashboard size={16} aria-hidden="true" />
                 Dashboard
+              </Button>
+            </Link>
+            <Link to={routes.certificates} className="hidden md:inline-flex">
+              <Button variant="secondary">
+                <Award size={16} aria-hidden="true" />
+                Certificates
               </Button>
             </Link>
             <div className="hidden items-center gap-2 rounded-lg border border-line bg-slate-50 px-3 py-2 lg:flex">

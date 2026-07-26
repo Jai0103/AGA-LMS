@@ -185,3 +185,35 @@ export type AdminUserStatus = "ACTIVE" | "SUSPENDED" | "PENDING";
 export type AdminAssignableRole = Exclude<UserRole, "VISITOR">;
 
 export type AdminCourseStatus = "Published" | "Draft";
+
+export type PlatformSettings = {
+  platformName: string;
+  supportEmail: string;
+  certificateIssuerName: string;
+  certificateFooterText: string;
+  catalogueVisibility: "Public" | "Private";
+  maintenanceEnabled: boolean;
+  maintenanceNotice: string;
+  securityNotice: string;
+  updatedAt: string;
+  updatedBy: string;
+};
+
+export type AdminPlatformSettingsData = {
+  settings: PlatformSettings;
+};
+
+export type AdminSavePlatformSettingsPayload = {
+  platformName: string;
+  supportEmail: string;
+  certificateIssuerName: string;
+  certificateFooterText: string;
+  catalogueVisibility: PlatformSettings["catalogueVisibility"];
+  maintenanceEnabled: boolean;
+  maintenanceNotice: string;
+  securityNotice: string;
+};
+
+export type AdminSavePlatformSettingsData = {
+  settings: PlatformSettings;
+};

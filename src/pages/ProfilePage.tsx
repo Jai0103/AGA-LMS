@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from "react";
-import { AtSign, BadgeCheck, CalendarDays, IdCard, Save, ShieldCheck, UserRound } from "lucide-react";
+import { AtSign, BadgeCheck, IdCard, Save, ShieldCheck, UserRound } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { updateMyProfile } from "../lib/profileApi";
 import type { AuthUser } from "../types/auth";
@@ -133,7 +133,7 @@ export function ProfilePage() {
         <ProfileField icon={<IdCard className="h-5 w-5" />} label="User ID" value={effectiveUser.userId} />
         <ProfileField icon={<AtSign className="h-5 w-5" />} label="Email" value={effectiveUser.email} />
         <ProfileField icon={<BadgeCheck className="h-5 w-5" />} label="Role" value={effectiveUser.role} />
-        <ProfileField icon={<CalendarDays className="h-5 w-5" />} label="Joined" value={formatDate(effectiveUser.createdAt)} />
+        <ProfileField icon={<ShieldCheck className="h-5 w-5" />} label="Status" value={effectiveUser.status} />
       </section>
     </div>
   );
@@ -158,22 +158,4 @@ function getInitials(value: string) {
     .slice(0, 2)
     .map((part) => part[0]?.toUpperCase() ?? "")
     .join("");
-}
-
-function formatDate(value: string) {
-  if (!value) {
-    return "Not available";
-  }
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
 }

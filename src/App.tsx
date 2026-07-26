@@ -3,6 +3,7 @@ import { AppShell } from "./components/layout/AppShell";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { AdminCoursesPage } from "./pages/AdminCoursesPage";
+import { AdminCreateCoursePage } from "./pages/AdminCreateCoursePage";
 import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { AdminEnrolmentsPage } from "./pages/AdminEnrolmentsPage";
 import { AdminReportsPage } from "./pages/AdminReportsPage";
@@ -17,7 +18,6 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { QuizPage } from "./pages/QuizPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { StudentDashboardPage } from "./pages/StudentDashboardPage";
-import { AdminCreateCoursePage } from "./pages/AdminCreateCoursePage";
 
 function App() {
   return (
@@ -30,6 +30,7 @@ function App() {
             <Route path="/courses/:slug" element={<CourseDetailsPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+
             <Route
               path="/dashboard"
               element={
@@ -38,6 +39,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/learn/:courseId"
               element={
@@ -46,6 +48,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/learn/:courseId/quiz"
               element={
@@ -54,6 +57,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/certificates"
               element={
@@ -62,6 +66,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/admin"
               element={
@@ -70,6 +75,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/admin/users"
               element={
@@ -80,13 +86,14 @@ function App() {
             />
 
             <Route
-  path="/admin/courses/new"
-  element={
-    <ProtectedRoute allowedRoles={["ADMIN"]}>
-      <AdminCreateCoursePage />
-    </ProtectedRoute>
-  }
-/>
+              path="/admin/courses/new"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminCreateCoursePage />
+                </ProtectedRoute>
+              }
+            />
+
             <Route
               path="/admin/courses"
               element={
@@ -95,6 +102,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/admin/enrolments"
               element={
@@ -103,6 +111,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/admin/reports"
               element={
@@ -111,6 +120,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route path="*" element={<NotFoundPage />} />
           </Route>
         </Routes>

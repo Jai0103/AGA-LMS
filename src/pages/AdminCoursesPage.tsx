@@ -1,9 +1,9 @@
-import { Link } from "react-router-dom";
-import { Button } from "../components/ui/Button";
 import { useEffect, useState } from "react";
 import { BookOpen, GraduationCap, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 import { AdminTable } from "../components/admin/AdminTable";
 import { Badge } from "../components/ui/Badge";
+import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { useAuth } from "../context/AuthContext";
 import { adminListCourses, adminUpdateCourseStatus } from "../lib/adminApi";
@@ -69,10 +69,18 @@ export function AdminCoursesPage() {
       <section className="border-b border-line bg-white">
         <div className="mx-auto max-w-7xl px-6 py-10">
           <Badge tone="brand">Admin courses</Badge>
+
           <h1 className="mt-5 text-4xl font-bold text-ink">Course inventory.</h1>
+
           <p className="mt-3 max-w-2xl leading-7 text-muted">
             Review courses and control whether each course is published or hidden as a draft.
           </p>
+
+          <div className="mt-6">
+            <Link to="/admin/courses/new">
+              <Button variant="secondary">Create course</Button>
+            </Link>
+          </div>
 
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             <Card className="p-5">
@@ -80,11 +88,13 @@ export function AdminCoursesPage() {
               <p className="mt-4 text-3xl font-bold text-ink">{courses.length}</p>
               <p className="mt-1 text-sm font-semibold text-muted">Total courses</p>
             </Card>
+
             <Card className="p-5">
               <GraduationCap className="text-brand-600" size={24} aria-hidden="true" />
               <p className="mt-4 text-3xl font-bold text-ink">{publishedCount}</p>
               <p className="mt-1 text-sm font-semibold text-muted">Published courses</p>
             </Card>
+
             <Card className="p-5">
               <Star className="text-brand-600" size={24} aria-hidden="true" />
               <p className="mt-4 text-3xl font-bold text-ink">{totalLessons}</p>
@@ -121,6 +131,7 @@ export function AdminCoursesPage() {
                   <th className="px-5 py-3">Status</th>
                 </tr>
               </thead>
+
               <tbody className="divide-y divide-line">
                 {courses.map((course) => {
                   const isSaving = savingCourseId === course.courseId;
@@ -131,13 +142,19 @@ export function AdminCoursesPage() {
                         <p className="font-semibold text-ink">{course.title}</p>
                         <p className="mt-1 text-xs text-muted">{course.trainerName}</p>
                       </td>
+
                       <td className="px-5 py-3 text-muted">{course.category}</td>
+
                       <td className="px-5 py-3">
                         <Badge>{course.level}</Badge>
                       </td>
+
                       <td className="px-5 py-3 text-muted">{course.lessonsCount}</td>
+
                       <td className="px-5 py-3 text-muted">{course.rating.toFixed(1)}</td>
+
                       <td className="px-5 py-3 text-muted">{course.enrolledCount.toLocaleString()}</td>
+
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">
                           <select
@@ -154,6 +171,7 @@ export function AdminCoursesPage() {
                               </option>
                             ))}
                           </select>
+
                           <Badge tone={course.status === "Published" ? "success" : "warning"}>
                             {course.status}
                           </Badge>

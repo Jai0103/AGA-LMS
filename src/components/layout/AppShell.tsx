@@ -58,16 +58,16 @@ export function AppShell() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex min-h-20 items-center justify-between gap-4">
             <Link to="/" className="flex items-center gap-3" onClick={() => setIsMobileOpen(false)}>
-              <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-slate-950 text-white shadow-sm">
+              <div className="flex h-14 w-[9rem] items-center justify-center overflow-hidden rounded-2xl bg-black px-2 shadow-sm sm:w-[12rem]">
                 <img
-                  src={`${import.meta.env.BASE_URL}brand-mark.svg`}
-                  alt=""
-                  className="h-11 w-11"
-                  width="44"
-                  height="44"
+                  src={`${import.meta.env.BASE_URL}aga-logo.png`}
+                  alt={settings.platformName}
+                  className="h-full w-full object-contain"
+                  width="192"
+                  height="56"
                 />
               </div>
-              <div>
+              <div className="hidden sm:block">
                 <p className="max-w-[13rem] truncate text-lg font-black tracking-tight sm:max-w-[18rem]">
                   {settings.platformName}
                 </p>

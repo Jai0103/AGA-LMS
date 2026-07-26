@@ -25,6 +25,15 @@ export type AdminQuizAttempt = {
   createdAt: string;
 };
 
+export type AdminAuditLog = {
+  auditLogId: string;
+  action: string;
+  actorUserId: string;
+  status: string;
+  detailsJson: string;
+  createdAt: string;
+};
+
 export type AdminReportsData = {
   metrics: AdminMetrics;
   recentUsers: AuthUser[];
@@ -33,10 +42,24 @@ export type AdminReportsData = {
   recentCertificates: Certificate[];
 };
 
+export type AdminDetailedReportsData = {
+  roleCounts: Record<string, number>;
+  courseCategoryCounts: Record<string, number>;
+  enrolmentStatusCounts: Record<string, number>;
+  averageProgress: number;
+  averageQuizScore: number;
+  certificatesIssued: number;
+  recentAuditLogs: AdminAuditLog[];
+};
+
 export type AdminUsersData = {
   users: AuthUser[];
 };
 
 export type AdminCoursesData = {
   courses: PublicCourseFromApi[];
+};
+
+export type AdminEnrolmentsData = {
+  enrolments: Enrolment[];
 };

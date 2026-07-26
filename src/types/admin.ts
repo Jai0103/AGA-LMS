@@ -2,6 +2,7 @@ import type { AuthUser, UserRole } from "./auth";
 import type { Certificate } from "./certificate";
 import type { Enrolment } from "./enrolment";
 import type { PlayerLesson } from "./progress";
+import type { Quiz, QuizQuestion } from "./quiz";
 import type { PublicCourseFromApi } from "../lib/courseApi";
 
 export type AdminMetrics = {
@@ -142,6 +143,41 @@ export type AdminCreateResourcePayload = {
 
 export type AdminCreateResourceData = {
   resource: AdminResource;
+};
+
+export type AdminQuizSetupData = {
+  course: PublicCourseFromApi;
+  quiz: Quiz | null;
+  questions: QuizQuestion[];
+};
+
+export type AdminSaveQuizPayload = {
+  courseId: string;
+  title: string;
+  passingScore: number;
+  status: AdminCourseStatus;
+};
+
+export type AdminSaveQuizData = {
+  quiz: Quiz;
+};
+
+export type AdminQuizQuestionOption = {
+  optionId: string;
+  label: string;
+};
+
+export type AdminAddQuizQuestionPayload = {
+  courseId: string;
+  prompt: string;
+  options: AdminQuizQuestionOption[];
+  correctOptionId: string;
+  points: number;
+  sortOrder: number;
+};
+
+export type AdminAddQuizQuestionData = {
+  question: QuizQuestion;
 };
 
 export type AdminUserStatus = "ACTIVE" | "SUSPENDED" | "PENDING";

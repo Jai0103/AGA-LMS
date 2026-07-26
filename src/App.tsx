@@ -2,6 +2,7 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import { PlatformSettingsProvider } from "./context/PlatformSettingsContext";
 import { AdminCoursesPage } from "./pages/AdminCoursesPage";
 import { AdminCreateCoursePage } from "./pages/AdminCreateCoursePage";
 import { AdminDashboardPage } from "./pages/AdminDashboardPage";
@@ -30,9 +31,10 @@ import { StudentDashboardPage } from "./pages/StudentDashboardPage";
 function App() {
   return (
     <AuthProvider>
-      <HashRouter>
-        <Routes>
-          <Route element={<AppShell />}>
+      <PlatformSettingsProvider>
+        <HashRouter>
+          <Routes>
+            <Route element={<AppShell />}>
             <Route path="/" element={<LandingPage />} />
             <Route path="/courses" element={<CataloguePage />} />
             <Route path="/courses/:slug" element={<CourseDetailsPage />} />
@@ -179,9 +181,10 @@ function App() {
             />
 
             <Route path="*" element={<NotFoundPage />} />
-          </Route>
-        </Routes>
-      </HashRouter>
+            </Route>
+          </Routes>
+        </HashRouter>
+      </PlatformSettingsProvider>
     </AuthProvider>
   );
 }

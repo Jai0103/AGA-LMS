@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, CheckCircle2, Download, LockKeyhole } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { CourseMeta } from "../components/course/CourseMeta";
@@ -7,20 +7,80 @@ import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { useAuth } from "../context/AuthContext";
-import { courses } from "../data/courses";
+import { courses as fallbackCourses } from "../data/courses";
+import { getPublicCourse, type PublicCourseFromApi } from "../lib/courseApi";
 import { enrollInCourse } from "../lib/enrolmentApi";
+import type { CourseLesson, CourseResource } from "../types/course";
+
+type CourseDetailsState = {
+  course: PublicCourseFromApi;
+  lessons: CourseLesson[];
+  outcomes: string[];
+  audience: string[];
+  resources: CourseResource[];
+};
 
 export function CourseDetailsPage() {
-  const { slug } = useParams();
+  const { slug = "" } = useParams();
   const navigate = useNavigate();
   const { isAuthenticated, sessionToken } = useAuth();
+
+  const [details, setDetails] = useState<CourseDetailsState | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isEnrolling, setIsEnrolling] = useState(false);
   const [enrolmentMessage, setEnrolmentMessage] = useState("");
 
-  const course = courses.find((item) => item.slug === slug);
+  useEffect(() => {
+    let isMounted = true;
+
+    const fallbackCourse = fallbackCourses.find((item) => item.slug === slug);
+
+    getPublicCourse(slug).then((response) => {
+      if (!isMounted) {
+        return;
+      }
+
+      if (response.ok) {
+        setDetails({
+          course: response.data.course,
+          lessons: response.data.lessons,
+          outcomes:
+            fallbackCourse?.outcomes.length
+              ? fallbackCourse.outcomes
+              : [
+                  "Complete the course lessons in sequence",
+                  "Apply the main concepts in practical workplace scenarios",
+                  "Track learning progress through the secure LMS backend",
+                  "Prepare for quizzes, completion records, and certificates",
+                ],
+          audience:
+            fallbackCourse?.audience.length
+              ? fallbackCourse.audience
+              : ["Students", "Professionals", "Team members", "New learners"],
+          resources: fallbackCourse?.resources ?? [],
+        });
+      } else if (fallbackCourse) {
+        setDetails({
+          course: fallbackCourse,
+          lessons: fallbackCourse.lessons,
+          outcomes: fallbackCourse.outcomes,
+          audience: fallbackCourse.audience,
+          resources: fallbackCourse.resources,
+        });
+      } else {
+        setDetails(null);
+      }
+
+      setIsLoading(false);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [slug]);
 
   async function handleEnroll() {
-    if (!course) {
+    if (!details) {
       return;
     }
 
@@ -32,7 +92,7 @@ export function CourseDetailsPage() {
     setIsEnrolling(true);
     setEnrolmentMessage("");
 
-    const response = await enrollInCourse(course.courseId, sessionToken);
+    const response = await enrollInCourse(details.course.courseId, sessionToken);
 
     setIsEnrolling(false);
 
@@ -45,7 +105,17 @@ export function CourseDetailsPage() {
     navigate("/dashboard");
   }
 
-  if (!course) {
+  if (isLoading) {
+    return (
+      <main className="bg-white">
+        <div className="mx-auto flex min-h-[65vh] max-w-3xl items-center justify-center px-6 py-20">
+          <p className="text-sm font-bold text-muted">Loading course...</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (!details) {
     return (
       <main className="bg-white">
         <div className="mx-auto flex min-h-[65vh] max-w-3xl flex-col items-center justify-center px-6 py-20 text-center">
@@ -59,6 +129,8 @@ export function CourseDetailsPage() {
       </main>
     );
   }
+
+  const { course, lessons, outcomes, audience, resources } = details;
 
   return (
     <main className="bg-slate-50">
@@ -132,7 +204,7 @@ export function CourseDetailsPage() {
           <Card className="p-6">
             <h2 className="text-2xl font-bold text-ink">What you will learn</h2>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {course.outcomes.map((outcome) => (
+              {outcomes.map((outcome) => (
                 <div key={outcome} className="flex gap-3">
                   <CheckCircle2 className="mt-0.5 shrink-0 text-brand-600" size={18} aria-hidden="true" />
                   <p className="text-sm leading-6 text-slate-700">{outcome}</p>
@@ -143,7 +215,13 @@ export function CourseDetailsPage() {
 
           <div>
             <h2 className="mb-4 text-2xl font-bold text-ink">Course syllabus</h2>
-            <CourseSyllabus lessons={course.lessons} />
+            {lessons.length > 0 ? (
+              <CourseSyllabus lessons={lessons} />
+            ) : (
+              <Card className="p-6">
+                <p className="text-sm font-bold text-muted">No lessons have been added yet.</p>
+              </Card>
+            )}
           </div>
         </div>
 
@@ -151,7 +229,7 @@ export function CourseDetailsPage() {
           <Card className="p-5">
             <h2 className="text-lg font-bold text-ink">Who this is for</h2>
             <div className="mt-4 flex flex-wrap gap-2">
-              {course.audience.map((item) => (
+              {audience.map((item) => (
                 <Badge key={item}>{item}</Badge>
               ))}
             </div>
@@ -160,15 +238,19 @@ export function CourseDetailsPage() {
           <Card className="p-5">
             <h2 className="text-lg font-bold text-ink">Resources</h2>
             <div className="mt-4 space-y-3">
-              {course.resources.map((resource) => (
-                <div key={resource.resourceId} className="flex items-center justify-between gap-3 rounded-lg border border-line bg-slate-50 px-3 py-3">
-                  <div>
-                    <p className="text-sm font-bold text-ink">{resource.title}</p>
-                    <p className="mt-1 text-xs text-muted">{resource.type}</p>
+              {resources.length > 0 ? (
+                resources.map((resource) => (
+                  <div key={resource.resourceId} className="flex items-center justify-between gap-3 rounded-lg border border-line bg-slate-50 px-3 py-3">
+                    <div>
+                      <p className="text-sm font-bold text-ink">{resource.title}</p>
+                      <p className="mt-1 text-xs text-muted">{resource.type}</p>
+                    </div>
+                    <Download className="shrink-0 text-slate-400" size={17} aria-hidden="true" />
                   </div>
-                  <Download className="shrink-0 text-slate-400" size={17} aria-hidden="true" />
-                </div>
-              ))}
+                ))
+              ) : (
+                <p className="text-sm text-muted">Resources will be added by the admin later.</p>
+              )}
             </div>
           </Card>
         </aside>

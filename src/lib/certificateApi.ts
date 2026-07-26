@@ -2,7 +2,7 @@ import { apiRequest } from "./apiClient";
 import type {
   CertificateEligibilityData,
   IssueCertificateData,
-  ListMyCertificatesData,
+  MyCertificatesData,
 } from "../types/certificate";
 
 export function checkCertificateEligibility(courseId: string, sessionToken: string) {
@@ -22,5 +22,5 @@ export function issueCertificate(courseId: string, sessionToken: string) {
 }
 
 export function listMyCertificates(sessionToken: string) {
-  return apiRequest<ListMyCertificatesData>("listMyCertificates", {}, sessionToken);
+  return apiRequest<MyCertificatesData>("listMyCertificates", {}, sessionToken);
 }

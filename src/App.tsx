@@ -8,6 +8,7 @@ import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { AdminEnrolmentsPage } from "./pages/AdminEnrolmentsPage";
 import { AdminLessonsPage } from "./pages/AdminLessonsPage";
 import { AdminReportsPage } from "./pages/AdminReportsPage";
+import { AdminResourcesPage } from "./pages/AdminResourcesPage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { CataloguePage } from "./pages/CataloguePage";
 import { CertificatesPage } from "./pages/CertificatesPage";
@@ -100,6 +101,15 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["ADMIN"]}>
                   <AdminLessonsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/courses/:courseId/resources"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminResourcesPage />
                 </ProtectedRoute>
               }
             />

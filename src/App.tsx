@@ -6,6 +6,7 @@ import { AdminCoursesPage } from "./pages/AdminCoursesPage";
 import { AdminCreateCoursePage } from "./pages/AdminCreateCoursePage";
 import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { AdminEnrolmentsPage } from "./pages/AdminEnrolmentsPage";
+import { AdminLessonsPage } from "./pages/AdminLessonsPage";
 import { AdminReportsPage } from "./pages/AdminReportsPage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { CataloguePage } from "./pages/CataloguePage";
@@ -18,7 +19,6 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { QuizPage } from "./pages/QuizPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { StudentDashboardPage } from "./pages/StudentDashboardPage";
-import { AdminLessonsPage } from "./pages/AdminLessonsPage";
 
 function App() {
   return (
@@ -76,14 +76,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route
-  path="/admin/courses/:courseId/lessons"
-  element={
-    <ProtectedRoute allowedRoles={["ADMIN"]}>
-      <AdminLessonsPage />
-    </ProtectedRoute>
-  }
-/>
+
             <Route
               path="/admin/users"
               element={
@@ -98,6 +91,15 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["ADMIN"]}>
                   <AdminCreateCoursePage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/courses/:courseId/lessons"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminLessonsPage />
                 </ProtectedRoute>
               }
             />

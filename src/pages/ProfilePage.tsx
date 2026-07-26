@@ -1,49 +1,115 @@
 import { FormEvent, useMemo, useState } from "react";
-import { AtSign, BadgeCheck, IdCard, Save, ShieldCheck, UserRound } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { AtSign, BadgeCheck, IdCard, KeyRound, Save, ShieldCheck, UserRound } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { updateMyProfile } from "../lib/profileApi";
+import { changeMyPassword, updateMyProfile } from "../lib/profileApi";
 import type { AuthUser } from "../types/auth";
 
 export function ProfilePage() {
-  const { user, sessionToken } = useAuth();
+  const navigate = useNavigate();
+  const { user, sessionToken, logout } = useAuth();
   const [profileUser, setProfileUser] = useState<AuthUser | null>(user);
   const [fullName, setFullName] = useState(user?.fullName ?? "");
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [profileError, setProfileError] = useState("");
+  const [profileSuccess, setProfileSuccess] = useState("");
+  const [isProfileSubmitting, setIsProfileSubmitting] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [isPasswordSubmitting, setIsPasswordSubmitting] = useState(false);
 
   const effectiveUser = profileUser ?? user;
   const initials = useMemo(() => getInitials(effectiveUser?.fullName ?? "AGA"), [effectiveUser?.fullName]);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleProfileSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError("");
-    setSuccess("");
+    setProfileError("");
+    setProfileSuccess("");
 
     const cleanName = fullName.replace(/\s+/g, " ").trim();
 
     if (cleanName.length < 3) {
-      setError("Full name must be at least 3 characters.");
+      setProfileError("Full name must be at least 3 characters.");
       return;
     }
 
-    setIsSubmitting(true);
+    setIsProfileSubmitting(true);
 
     try {
       const response = await updateMyProfile({ fullName: cleanName }, sessionToken);
 
       if (!response.ok) {
-        setError(response.error.message);
+        setProfileError(response.error.message);
         return;
       }
 
       setProfileUser(response.data.user);
       setFullName(response.data.user.fullName);
-      setSuccess("Profile updated.");
+      setProfileSuccess("Profile updated.");
     } catch (caughtError) {
-      setError(caughtError instanceof Error ? caughtError.message : "Profile could not be updated.");
+      setProfileError(caughtError instanceof Error ? caughtError.message : "Profile could not be updated.");
     } finally {
-      setIsSubmitting(false);
+      setIsProfileSubmitting(false);
+    }
+  }
+
+  async function handlePasswordSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordError("Complete all password fields.");
+      return;
+    }
+
+    if (newPassword.length < 10) {
+      setPasswordError("New password must be at least 10 characters.");
+      return;
+    }
+
+    if (!/[a-z]/.test(newPassword) || !/[A-Z]/.test(newPassword) || !/[0-9]/.test(newPassword)) {
+      setPasswordError("New password must include uppercase, lowercase, and a number.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("New password and confirm password do not match.");
+      return;
+    }
+
+    setIsPasswordSubmitting(true);
+
+    try {
+      const response = await changeMyPassword(
+        {
+          currentPassword,
+          newPassword,
+          confirmPassword,
+        },
+        sessionToken,
+      );
+
+      if (!response.ok) {
+        setPasswordError(response.error.message);
+        return;
+      }
+
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setPasswordSuccess(response.data.message);
+
+      window.setTimeout(async () => {
+        await logout();
+        navigate("/login");
+      }, 1200);
+    } catch (caughtError) {
+      setPasswordError(caughtError instanceof Error ? caughtError.message : "Password could not be changed.");
+    } finally {
+      setIsPasswordSubmitting(false);
     }
   }
 
@@ -72,7 +138,7 @@ export function ProfilePage() {
 
             <div className="space-y-2">
               <p className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">
-                Account profile
+                Account settings
               </p>
               <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{effectiveUser.fullName}</h1>
               <p className="break-all text-sm font-semibold text-slate-300">{effectiveUser.email}</p>
@@ -92,7 +158,7 @@ export function ProfilePage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleProfileSubmit} className="space-y-4">
             <div>
               <label htmlFor="fullName" className="text-sm font-bold text-slate-900">
                 Full name
@@ -105,25 +171,16 @@ export function ProfilePage() {
               />
             </div>
 
-            {error ? (
-              <div className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
-                {error}
-              </div>
-            ) : null}
-
-            {success ? (
-              <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
-                {success}
-              </div>
-            ) : null}
+            <FormAlert tone="error" message={profileError} />
+            <FormAlert tone="success" message={profileSuccess} />
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isProfileSubmitting}
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
             >
               <Save className="h-4 w-4" />
-              {isSubmitting ? "Saving..." : "Save profile"}
+              {isProfileSubmitting ? "Saving..." : "Save profile"}
             </button>
           </form>
         </div>
@@ -135,8 +192,97 @@ export function ProfilePage() {
         <ProfileField icon={<BadgeCheck className="h-5 w-5" />} label="Role" value={effectiveUser.role} />
         <ProfileField icon={<ShieldCheck className="h-5 w-5" />} label="Status" value={effectiveUser.status} />
       </section>
+
+      <section className="grid gap-6 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm lg:grid-cols-[0.8fr_1.2fr] lg:p-8">
+        <div className="space-y-3">
+          <div className="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-sm font-semibold text-blue-700">
+            <KeyRound className="h-4 w-4" />
+            Password security
+          </div>
+          <h2 className="text-3xl font-bold tracking-tight text-slate-950">Change password</h2>
+          <p className="max-w-2xl text-sm leading-6 text-slate-600">
+            Enter your current password before setting a new one. After a successful change, active sessions are expired and you will be asked to log in again.
+          </p>
+        </div>
+
+        <form onSubmit={handlePasswordSubmit} className="space-y-4">
+          <PasswordInput
+            id="currentPassword"
+            label="Current password"
+            value={currentPassword}
+            onChange={setCurrentPassword}
+          />
+          <PasswordInput
+            id="newPassword"
+            label="New password"
+            value={newPassword}
+            onChange={setNewPassword}
+          />
+          <PasswordInput
+            id="confirmPassword"
+            label="Confirm new password"
+            value={confirmPassword}
+            onChange={setConfirmPassword}
+          />
+
+          <p className="text-xs font-semibold leading-5 text-slate-500">
+            Minimum 10 characters with uppercase, lowercase, and a number.
+          </p>
+
+          <FormAlert tone="error" message={passwordError} />
+          <FormAlert tone="success" message={passwordSuccess} />
+
+          <button
+            type="submit"
+            disabled={isPasswordSubmitting}
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-5 text-sm font-bold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400"
+          >
+            <KeyRound className="h-4 w-4" />
+            {isPasswordSubmitting ? "Changing..." : "Change password"}
+          </button>
+        </form>
+      </section>
     </div>
   );
+}
+
+function PasswordInput({
+  id,
+  label,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div>
+      <label htmlFor={id} className="text-sm font-bold text-slate-900">
+        {label}
+      </label>
+      <input
+        id={id}
+        type="password"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="mt-2 min-h-12 w-full rounded-2xl border border-slate-300 bg-white px-4 text-sm font-semibold text-slate-900 outline-none transition focus:border-slate-950 focus:ring-4 focus:ring-slate-200"
+      />
+    </div>
+  );
+}
+
+function FormAlert({ tone, message }: { tone: "error" | "success"; message: string }) {
+  if (!message) {
+    return null;
+  }
+
+  const className = tone === "error"
+    ? "rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700"
+    : "rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700";
+
+  return <div className={className}>{message}</div>;
 }
 
 function ProfileField({ icon, label, value }: { icon: JSX.Element; label: string; value: string }) {

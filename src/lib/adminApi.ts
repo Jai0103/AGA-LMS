@@ -14,9 +14,12 @@ import type {
   AdminDetailedReportsData,
   AdminEnrolmentsData,
   AdminLessonsData,
+  AdminPlatformSettingsData,
   AdminQuizSetupData,
   AdminReportsData,
   AdminResourcesData,
+  AdminSavePlatformSettingsData,
+  AdminSavePlatformSettingsPayload,
   AdminSaveQuizData,
   AdminSaveQuizPayload,
   AdminUpdateCourseStatusData,
@@ -129,6 +132,18 @@ export function adminSaveQuiz(payload: AdminSaveQuizPayload, sessionToken: strin
 export function adminAddQuizQuestion(payload: AdminAddQuizQuestionPayload, sessionToken: string) {
   return apiRequest<AdminAddQuizQuestionData, AdminAddQuizQuestionPayload>(
     "adminAddQuizQuestion",
+    payload,
+    sessionToken,
+  );
+}
+
+export function adminGetPlatformSettings(sessionToken: string) {
+  return apiRequest<AdminPlatformSettingsData>("adminGetPlatformSettings", {}, sessionToken);
+}
+
+export function adminSavePlatformSettings(payload: AdminSavePlatformSettingsPayload, sessionToken: string) {
+  return apiRequest<AdminSavePlatformSettingsData, AdminSavePlatformSettingsPayload>(
+    "adminSavePlatformSettings",
     payload,
     sessionToken,
   );

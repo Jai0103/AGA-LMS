@@ -7,6 +7,7 @@ import { AdminCreateCoursePage } from "./pages/AdminCreateCoursePage";
 import { AdminDashboardPage } from "./pages/AdminDashboardPage";
 import { AdminEnrolmentsPage } from "./pages/AdminEnrolmentsPage";
 import { AdminLessonsPage } from "./pages/AdminLessonsPage";
+import { AdminQuizPage } from "./pages/AdminQuizPage";
 import { AdminReportsPage } from "./pages/AdminReportsPage";
 import { AdminResourcesPage } from "./pages/AdminResourcesPage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
@@ -110,6 +111,15 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["ADMIN"]}>
                   <AdminResourcesPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/courses/:courseId/quiz"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminQuizPage />
                 </ProtectedRoute>
               }
             />

@@ -1,9 +1,10 @@
 import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { LockKeyhole, ShieldCheck } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
+import { useAuth } from "../context/AuthContext";
 import { isValidEmail } from "../lib/formValidation";
 
 type LoginErrors = {
@@ -12,13 +13,15 @@ type LoginErrors = {
 };
 
 export function LoginPage() {
+  const navigate = useNavigate();
+  const { login, isLoading, authError, clearAuthError } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<LoginErrors>({});
-  const [notice, setNotice] = useState("");
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    clearAuthError();
 
     const nextErrors: LoginErrors = {};
 
@@ -33,7 +36,11 @@ export function LoginPage() {
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length === 0) {
-      setNotice("Frontend validation passed. Secure Apps Script authentication will be connected in the backend step.");
+      const success = await login({ email, password });
+
+      if (success) {
+        navigate("/courses");
+      }
     }
   }
 
@@ -46,7 +53,7 @@ export function LoginPage() {
           </div>
           <h1 className="max-w-xl text-4xl font-bold text-ink">Log in to continue your learning.</h1>
           <p className="mt-4 max-w-xl leading-7 text-muted">
-            Students, trainers, and admins will use secure sessions issued by the Apps Script backend.
+            Students, trainers, and admins use secure sessions issued by the Apps Script backend.
           </p>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -86,14 +93,14 @@ export function LoginPage() {
               onChange={(event) => setPassword(event.target.value)}
             />
 
-            {notice ? (
-              <div className="rounded-lg border border-brand-100 bg-brand-50 p-3 text-sm font-semibold leading-6 text-brand-700">
-                {notice}
+            {authError ? (
+              <div className="rounded-lg border border-red-100 bg-red-50 p-3 text-sm font-semibold leading-6 text-red-700">
+                {authError}
               </div>
             ) : null}
 
-            <Button type="submit" className="w-full">
-              Log in
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Log in"}
             </Button>
           </form>
 

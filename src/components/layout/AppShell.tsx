@@ -2,12 +2,12 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   Award,
-  BookOpen,
   ChevronDown,
   GraduationCap,
   HelpCircle,
   LayoutDashboard,
   LogOut,
+  Megaphone,
   Menu,
   SearchCheck,
   Settings,
@@ -16,6 +16,7 @@ import {
   X,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import { usePlatformSettings } from "../../context/PlatformSettingsContext";
 
 const publicLinks = [
   { to: "/courses", label: "Courses" },
@@ -25,6 +26,7 @@ const publicLinks = [
 export function AppShell() {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { settings } = usePlatformSettings();
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement | null>(null);
@@ -59,7 +61,9 @@ export function AppShell() {
                 <GraduationCap className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-lg font-black tracking-tight">AGA LMS</p>
+                <p className="max-w-[13rem] truncate text-lg font-black tracking-tight sm:max-w-[18rem]">
+                  {settings.platformName}
+                </p>
                 <p className="text-xs font-semibold text-slate-500">Premium learning platform</p>
               </div>
             </Link>
@@ -103,7 +107,13 @@ export function AppShell() {
                   </button>
 
                   {isAccountOpen ? (
-                    <AccountDropdown isAdmin={isAdmin} onLogout={handleLogout} onNavigate={() => setIsAccountOpen(false)} />
+                    <AccountDropdown
+                      isAdmin={isAdmin}
+                      platformName={settings.platformName}
+                      supportEmail={settings.supportEmail}
+                      onLogout={handleLogout}
+                      onNavigate={() => setIsAccountOpen(false)}
+                    />
                   ) : null}
                 </div>
               ) : (
@@ -146,10 +156,31 @@ export function AppShell() {
 
                 {isSignedIn ? (
                   <>
-                    <MobileLink to="/dashboard" onClick={() => setIsMobileOpen(false)}>My Learning</MobileLink>
-                    <MobileLink to="/certificates" onClick={() => setIsMobileOpen(false)}>Certificates</MobileLink>
-                    <MobileLink to="/profile" onClick={() => setIsMobileOpen(false)}>Settings</MobileLink>
-                    {isAdmin ? <MobileLink to="/admin" onClick={() => setIsMobileOpen(false)}>Admin</MobileLink> : null}
+                    <MobileLink to="/dashboard" onClick={() => setIsMobileOpen(false)}>
+                      My Learning
+                    </MobileLink>
+                    <MobileLink to="/certificates" onClick={() => setIsMobileOpen(false)}>
+                      Certificates
+                    </MobileLink>
+                    <MobileLink to="/profile" onClick={() => setIsMobileOpen(false)}>
+                      Settings
+                    </MobileLink>
+                    {isAdmin ? (
+                      <>
+                        <MobileLink to="/admin" onClick={() => setIsMobileOpen(false)}>
+                          Admin
+                        </MobileLink>
+                        <MobileLink to="/admin/settings" onClick={() => setIsMobileOpen(false)}>
+                          Platform Settings
+                        </MobileLink>
+                      </>
+                    ) : null}
+                    <a
+                      href={`mailto:${settings.supportEmail}`}
+                      className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                    >
+                      Help Center
+                    </a>
                     <button
                       type="button"
                       onClick={handleLogout}
@@ -160,7 +191,9 @@ export function AppShell() {
                   </>
                 ) : (
                   <>
-                    <MobileLink to="/login" onClick={() => setIsMobileOpen(false)}>Log in</MobileLink>
+                    <MobileLink to="/login" onClick={() => setIsMobileOpen(false)}>
+                      Log in
+                    </MobileLink>
                     <Link
                       to="/register"
                       onClick={() => setIsMobileOpen(false)}
@@ -174,6 +207,15 @@ export function AppShell() {
             </div>
           ) : null}
         </div>
+
+        {settings.maintenanceEnabled ? (
+          <div className="border-t border-amber-200 bg-amber-50">
+            <div className="mx-auto flex max-w-7xl items-start gap-3 px-4 py-3 text-sm font-bold text-amber-900 sm:px-6 lg:px-8">
+              <Megaphone className="mt-0.5 h-4 w-4 shrink-0" />
+              <p>{settings.maintenanceNotice}</p>
+            </div>
+          </div>
+        ) : null}
       </header>
 
       <main className="mx-auto min-h-[calc(100vh-11rem)] max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -182,8 +224,8 @@ export function AppShell() {
 
       <footer className="border-t border-slate-200 bg-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-sm font-semibold text-slate-500 sm:px-6 lg:px-8">
-          <p>AGA LMS · React, TypeScript, Vite, Tailwind CSS</p>
-          <p>API connected through Apps Script · Build 2026</p>
+          <p>{settings.platformName} - React, TypeScript, Vite, Tailwind CSS</p>
+          <p>Support: {settings.supportEmail} - API connected through Apps Script - Build 2026</p>
         </div>
       </footer>
     </div>
@@ -192,10 +234,14 @@ export function AppShell() {
 
 function AccountDropdown({
   isAdmin,
+  platformName,
+  supportEmail,
   onLogout,
   onNavigate,
 }: {
   isAdmin: boolean;
+  platformName: string;
+  supportEmail: string;
   onLogout: () => void;
   onNavigate: () => void;
 }) {
@@ -215,12 +261,21 @@ function AccountDropdown({
           Admin Dashboard
         </DropdownLink>
       ) : null}
+      {isAdmin ? (
+        <DropdownLink to="/admin/settings" icon={<Settings className="h-4 w-4" />} onClick={onNavigate}>
+          Platform Settings
+        </DropdownLink>
+      ) : null}
       <DropdownLink to="/verify-certificate" icon={<SearchCheck className="h-4 w-4" />} onClick={onNavigate}>
         Verify Certificate
       </DropdownLink>
-      <DropdownLink to="/courses" icon={<HelpCircle className="h-4 w-4" />} onClick={onNavigate}>
+      <a
+        href={`mailto:${supportEmail}`}
+        className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+      >
+        <HelpCircle className="h-4 w-4 text-slate-500" />
         Help Center
-      </DropdownLink>
+      </a>
 
       <button
         type="button"
@@ -232,7 +287,7 @@ function AccountDropdown({
       </button>
 
       <div className="mt-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
-        <p className="text-sm font-black text-blue-700">AGA LMS Pro</p>
+        <p className="text-sm font-black text-blue-700">{platformName} Pro</p>
         <p className="mt-1 text-xs font-semibold text-slate-600">Verified learning, quizzes, and certificates</p>
       </div>
     </div>

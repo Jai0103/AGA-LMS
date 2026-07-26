@@ -2,6 +2,10 @@ import type { ApiRequest, ApiResponse } from "../types/api";
 
 const API_URL = import.meta.env.VITE_APPS_SCRIPT_API_URL as string | undefined;
 
+export function isAuthFailureCode(code: string): boolean {
+  return code === "UNAUTHORIZED" || code === "FORBIDDEN";
+}
+
 export async function apiRequest<TData, TPayload = Record<string, unknown>>(
   action: string,
   payload: TPayload,
@@ -29,7 +33,19 @@ export async function apiRequest<TData, TPayload = Record<string, unknown>>(
       body: JSON.stringify(requestBody),
     });
 
-    const data = (await response.json()) as ApiResponse<TData>;
+    let data: ApiResponse<TData>;
+
+    try {
+      data = (await response.json()) as ApiResponse<TData>;
+    } catch {
+      return {
+        ok: false,
+        error: {
+          code: "BAD_RESPONSE",
+          message: "The backend returned an unreadable response.",
+        },
+      };
+    }
 
     return data;
   } catch {

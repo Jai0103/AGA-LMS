@@ -128,6 +128,7 @@ export function AdminCoursesPage() {
                   <th className="px-5 py-3">Lessons</th>
                   <th className="px-5 py-3">Rating</th>
                   <th className="px-5 py-3">Learners</th>
+                  <th className="px-5 py-3">Manage</th>
                   <th className="px-5 py-3">Status</th>
                 </tr>
               </thead>
@@ -154,6 +155,15 @@ export function AdminCoursesPage() {
                       <td className="px-5 py-3 text-muted">{course.rating.toFixed(1)}</td>
 
                       <td className="px-5 py-3 text-muted">{course.enrolledCount.toLocaleString()}</td>
+
+                      <td className="px-5 py-3">
+                        <Link
+                          to={`/admin/courses/${course.courseId}/lessons`}
+                          className="text-sm font-bold text-brand-700 hover:text-brand-600"
+                        >
+                          Manage lessons
+                        </Link>
+                      </td>
 
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2">

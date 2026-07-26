@@ -10,6 +10,7 @@ import { AdminLessonsPage } from "./pages/AdminLessonsPage";
 import { AdminQuizPage } from "./pages/AdminQuizPage";
 import { AdminReportsPage } from "./pages/AdminReportsPage";
 import { AdminResourcesPage } from "./pages/AdminResourcesPage";
+import { AdminSettingsPage } from "./pages/AdminSettingsPage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { CataloguePage } from "./pages/CataloguePage";
 import { CertificateVerificationPage } from "./pages/CertificateVerificationPage";
@@ -164,6 +165,15 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["ADMIN"]}>
                   <AdminReportsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/settings"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminSettingsPage />
                 </ProtectedRoute>
               }
             />

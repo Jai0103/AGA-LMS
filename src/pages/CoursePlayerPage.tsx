@@ -1,5 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Award, CheckCircle2, FileText, HelpCircle, LockKeyhole, PlayCircle } from "lucide-react";
+import {
+  ArrowLeft,
+  Award,
+  CheckCircle2,
+  ExternalLink,
+  FileText,
+  HelpCircle,
+  Link as LinkIcon,
+  LockKeyhole,
+  PlayCircle,
+} from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
@@ -7,6 +17,8 @@ import { Card } from "../components/ui/Card";
 import { ProgressBar } from "../components/ui/ProgressBar";
 import { useAuth } from "../context/AuthContext";
 import { getCoursePlayer, markLessonComplete } from "../lib/progressApi";
+import { listCourseResources } from "../lib/resourceApi";
+import type { AdminResource } from "../types/admin";
 import type { CoursePlayerData, PlayerLesson } from "../types/progress";
 
 const lessonIcons = {
@@ -16,11 +28,19 @@ const lessonIcons = {
   Resource: FileText,
 };
 
+const resourceTone = {
+  PDF: "brand",
+  Template: "success",
+  Link: "neutral",
+  Checklist: "warning",
+} as const;
+
 export function CoursePlayerPage() {
   const { courseId = "" } = useParams();
   const { sessionToken } = useAuth();
 
   const [playerData, setPlayerData] = useState<CoursePlayerData | null>(null);
+  const [resources, setResources] = useState<AdminResource[]>([]);
   const [selectedLessonId, setSelectedLessonId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -29,20 +49,26 @@ export function CoursePlayerPage() {
   useEffect(() => {
     let isMounted = true;
 
-    getCoursePlayer(courseId, sessionToken).then((response) => {
-      if (!isMounted) {
-        return;
-      }
+    Promise.all([getCoursePlayer(courseId, sessionToken), listCourseResources(courseId, sessionToken)]).then(
+      ([playerResponse, resourcesResponse]) => {
+        if (!isMounted) {
+          return;
+        }
 
-      if (response.ok) {
-        setPlayerData(response.data);
-        setSelectedLessonId(response.data.lessons[0]?.lessonId ?? "");
-      } else {
-        setNotice(response.error.message);
-      }
+        if (playerResponse.ok) {
+          setPlayerData(playerResponse.data);
+          setSelectedLessonId(playerResponse.data.lessons[0]?.lessonId ?? "");
+        } else {
+          setNotice(playerResponse.error.message);
+        }
 
-      setIsLoading(false);
-    });
+        if (resourcesResponse.ok) {
+          setResources(resourcesResponse.data.resources);
+        }
+
+        setIsLoading(false);
+      },
+    );
 
     return () => {
       isMounted = false;
@@ -56,6 +82,14 @@ export function CoursePlayerPage() {
   const selectedLesson = useMemo<PlayerLesson | null>(() => {
     return playerData?.lessons.find((lesson) => lesson.lessonId === selectedLessonId) ?? null;
   }, [playerData, selectedLessonId]);
+
+  const selectedLessonResources = useMemo(() => {
+    return resources.filter((resource) => resource.lessonId === selectedLessonId);
+  }, [resources, selectedLessonId]);
+
+  const courseLevelResources = useMemo(() => {
+    return resources.filter((resource) => !resource.lessonId);
+  }, [resources]);
 
   async function handleMarkComplete() {
     if (!playerData || !selectedLesson) {
@@ -229,7 +263,7 @@ export function CoursePlayerPage() {
                 <div>
                   <Badge>{selectedLesson.type}</Badge>
                   <p className="mt-3 text-sm leading-6 text-muted">
-                    {selectedLesson.notes || "Lesson notes and resources will be managed from the backend in the next course content step."}
+                    {selectedLesson.notes || "Lesson notes and resources will be managed from the backend."}
                   </p>
                 </div>
 
@@ -251,13 +285,75 @@ export function CoursePlayerPage() {
           </Card>
 
           <Card className="p-5">
+            <div className="mb-4 flex items-center gap-2">
+              <LinkIcon className="text-brand-600" size={18} aria-hidden="true" />
+              <h2 className="text-lg font-bold text-ink">Lesson resources</h2>
+            </div>
+
+            {selectedLessonResources.length > 0 ? (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {selectedLessonResources.map((resource) => (
+                  <a
+                    key={resource.resourceId}
+                    className="rounded-lg border border-line bg-slate-50 p-4 transition hover:bg-white"
+                    href={resource.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <Badge tone={resourceTone[resource.type]}>{resource.type}</Badge>
+                        <p className="mt-3 text-sm font-bold text-ink">{resource.title}</p>
+                      </div>
+                      <ExternalLink className="shrink-0 text-slate-400" size={17} aria-hidden="true" />
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm leading-6 text-muted">No lesson-specific resources have been added yet.</p>
+            )}
+          </Card>
+
+          <Card className="p-5">
+            <div className="mb-4 flex items-center gap-2">
+              <FileText className="text-brand-600" size={18} aria-hidden="true" />
+              <h2 className="text-lg font-bold text-ink">Course resources</h2>
+            </div>
+
+            {courseLevelResources.length > 0 ? (
+              <div className="grid gap-3 sm:grid-cols-2">
+                {courseLevelResources.map((resource) => (
+                  <a
+                    key={resource.resourceId}
+                    className="rounded-lg border border-line bg-slate-50 p-4 transition hover:bg-white"
+                    href={resource.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <Badge tone={resourceTone[resource.type]}>{resource.type}</Badge>
+                        <p className="mt-3 text-sm font-bold text-ink">{resource.title}</p>
+                      </div>
+                      <ExternalLink className="shrink-0 text-slate-400" size={17} aria-hidden="true" />
+                    </div>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm leading-6 text-muted">No course-level resources have been added yet.</p>
+            )}
+          </Card>
+
+          <Card className="p-5">
             <div className="mb-3 flex items-center gap-2">
               <LockKeyhole className="text-brand-600" size={18} aria-hidden="true" />
-              <h2 className="text-lg font-bold text-ink">Secure progress and quiz tracking</h2>
+              <h2 className="text-lg font-bold text-ink">Secure progress and resource access</h2>
             </div>
             <p className="text-sm leading-6 text-muted">
-              Lesson completion and quiz attempts are sent to Apps Script with your session token. The backend verifies
-              enrollment, validates each request, and stores the results in Google Sheets.
+              Lesson completion and course resources are requested with your session token. The backend verifies
+              enrollment before returning resource links.
             </p>
           </Card>
         </div>

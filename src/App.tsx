@@ -4,6 +4,7 @@ import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { CataloguePage } from "./pages/CataloguePage";
 import { CourseDetailsPage } from "./pages/CourseDetailsPage";
+import { CoursePlayerPage } from "./pages/CoursePlayerPage";
 import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -26,6 +27,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <StudentDashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/learn/:courseId"
+              element={
+                <ProtectedRoute>
+                  <CoursePlayerPage />
                 </ProtectedRoute>
               }
             />

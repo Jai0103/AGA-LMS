@@ -1,18 +1,23 @@
 import { apiRequest } from "./apiClient";
-import type { CoursePlayerData, MarkLessonCompleteData } from "../types/progress";
+import type {
+  ChangeMyPasswordData,
+  ChangeMyPasswordPayload,
+  UpdateMyProfileData,
+  UpdateMyProfilePayload,
+} from "../types/profile";
 
-export function getCoursePlayer(courseId: string, sessionToken: string) {
-  return apiRequest<CoursePlayerData, { courseId: string }>(
-    "getCoursePlayer",
-    { courseId },
+export function updateMyProfile(payload: UpdateMyProfilePayload, sessionToken: string) {
+  return apiRequest<UpdateMyProfileData, UpdateMyProfilePayload>(
+    "updateMyProfile",
+    payload,
     sessionToken,
   );
 }
 
-export function markLessonComplete(courseId: string, lessonId: string, sessionToken: string, watchedSeconds = 0) {
-  return apiRequest<MarkLessonCompleteData, { courseId: string; lessonId: string; watchedSeconds: number }>(
-    "markLessonComplete",
-    { courseId, lessonId, watchedSeconds },
+export function changeMyPassword(payload: ChangeMyPasswordPayload, sessionToken: string) {
+  return apiRequest<ChangeMyPasswordData, ChangeMyPasswordPayload>(
+    "changeMyPassword",
+    payload,
     sessionToken,
   );
 }

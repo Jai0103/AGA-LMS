@@ -157,12 +157,20 @@ export function AdminCoursesPage() {
                       <td className="px-5 py-3 text-muted">{course.enrolledCount.toLocaleString()}</td>
 
                       <td className="px-5 py-3">
-                        <Link
-                          to={`/admin/courses/${course.courseId}/lessons`}
-                          className="text-sm font-bold text-brand-700 hover:text-brand-600"
-                        >
-                          Manage lessons
-                        </Link>
+                        <div className="flex flex-col gap-2">
+                          <Link
+                            to={`/admin/courses/${course.courseId}/lessons`}
+                            className="text-sm font-bold text-brand-700 hover:text-brand-600"
+                          >
+                            Manage lessons
+                          </Link>
+                          <Link
+                            to={`/admin/courses/${course.courseId}/resources`}
+                            className="text-sm font-bold text-brand-700 hover:text-brand-600"
+                          >
+                            Manage resources
+                          </Link>
+                        </div>
                       </td>
 
                       <td className="px-5 py-3">

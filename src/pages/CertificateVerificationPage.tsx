@@ -1,10 +1,12 @@
 import { FormEvent, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Award, CheckCircle2, ExternalLink, Search, ShieldCheck, XCircle } from "lucide-react";
+import { usePlatformSettings } from "../context/PlatformSettingsContext";
 import { verifyCertificate } from "../lib/certificateVerificationApi";
 import type { CertificateVerificationData } from "../types/certificateVerification";
 
 export function CertificateVerificationPage() {
+  const { settings } = usePlatformSettings();
   const params = useParams<{ certificateCode?: string }>();
   const initialCode = useMemo(() => params.certificateCode ?? "", [params.certificateCode]);
   const [certificateCode, setCertificateCode] = useState(initialCode);
@@ -54,7 +56,7 @@ export function CertificateVerificationPage() {
           </div>
           <div className="space-y-3">
             <h1 className="max-w-3xl text-3xl font-bold tracking-tight text-slate-950 md:text-5xl">
-              Verify an AGA LMS certificate
+              Verify a {settings.platformName} certificate
             </h1>
             <p className="max-w-2xl text-base leading-7 text-slate-600">
               Enter the certificate code shown on the PDF to confirm that it was issued after backend validation of course completion and quiz eligibility.
@@ -97,7 +99,7 @@ export function CertificateVerificationPage() {
                 Verification standard
               </p>
               <p className="text-2xl font-bold">
-                Certificate records are checked against the secured Apps Script backend and Google Sheets database.
+                {settings.certificateFooterText}
               </p>
             </div>
           </div>

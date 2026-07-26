@@ -25,7 +25,7 @@ export function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      await login(cleanEmail, password);
+      await login({ email: cleanEmail, password });
       navigate("/dashboard");
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "The request could not be processed.");

@@ -72,6 +72,12 @@ export type AdminUpdateUserStatusData = {
   user: AuthUser;
 };
 
+export type AdminUpdateCourseStatusData = {
+  course: PublicCourseFromApi;
+};
+
 export type AdminUserStatus = "ACTIVE" | "SUSPENDED" | "PENDING";
 
 export type AdminAssignableRole = Exclude<UserRole, "VISITOR">;
+
+export type AdminCourseStatus = "Published" | "Draft";

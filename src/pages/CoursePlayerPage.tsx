@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, CheckCircle2, FileText, HelpCircle, LockKeyhole, PlayCircle } from "lucide-react";
+import { ArrowLeft, Award, CheckCircle2, FileText, HelpCircle, LockKeyhole, PlayCircle } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
@@ -170,7 +170,16 @@ export function CoursePlayerPage() {
 
       <section className="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[320px_1fr]">
         <aside className="space-y-3">
-          <h2 className="text-sm font-bold uppercase tracking-normal text-muted">Lessons</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-sm font-bold uppercase tracking-normal text-muted">Lessons</h2>
+            <Link to={`/learn/${playerData.course.courseId}/quiz`} className="inline-flex">
+              <Button variant="secondary" className="px-3 py-2">
+                <Award size={16} aria-hidden="true" />
+                Quiz
+              </Button>
+            </Link>
+          </div>
+
           <div className="divide-y divide-line rounded-lg border border-line bg-white">
             {playerData.lessons.map((lesson, index) => {
               const Icon = lessonIcons[lesson.type];
@@ -244,11 +253,11 @@ export function CoursePlayerPage() {
           <Card className="p-5">
             <div className="mb-3 flex items-center gap-2">
               <LockKeyhole className="text-brand-600" size={18} aria-hidden="true" />
-              <h2 className="text-lg font-bold text-ink">Secure progress tracking</h2>
+              <h2 className="text-lg font-bold text-ink">Secure progress and quiz tracking</h2>
             </div>
             <p className="text-sm leading-6 text-muted">
-              Completion updates are sent to Apps Script with your session token. The backend verifies enrollment,
-              validates the lesson, updates the Progress sheet, and recalculates the Enrolments progress percentage.
+              Lesson completion and quiz attempts are sent to Apps Script with your session token. The backend verifies
+              enrollment, validates each request, and stores the results in Google Sheets.
             </p>
           </Card>
         </div>

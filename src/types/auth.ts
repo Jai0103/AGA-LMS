@@ -9,7 +9,21 @@ export type AuthUser = {
 };
 
 export type SessionState = {
-  token: string;
+  sessionToken: string;
   user: AuthUser;
   expiresAt: string;
+};
+
+export type AuthResponseData = {
+  user: AuthUser;
+  sessionToken: string;
+  expiresAt: string;
+};
+
+export type GetMeResponseData = {
+  user: AuthUser;
+};
+
+export type LogoutResponseData = {
+  loggedOut: boolean;
 };

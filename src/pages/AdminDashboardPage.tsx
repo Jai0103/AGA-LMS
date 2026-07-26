@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { Award, BookOpen, ClipboardList, GraduationCap, ShieldCheck, Users } from "lucide-react";
+import { Link } from "react-router-dom";
 import { AdminMetricCard } from "../components/admin/AdminMetricCard";
 import { AdminTable } from "../components/admin/AdminTable";
 import { Badge } from "../components/ui/Badge";
+import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { useAuth } from "../context/AuthContext";
 import { adminReports } from "../lib/adminApi";
@@ -45,6 +47,15 @@ export function AdminDashboardPage() {
           <p className="mt-3 max-w-2xl leading-7 text-muted">
             Monitor users, courses, enrolments, quiz attempts, certificates, and backend activity.
           </p>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link to="/admin/users">
+              <Button variant="secondary">Manage users</Button>
+            </Link>
+            <Link to="/admin/courses">
+              <Button variant="secondary">Manage courses</Button>
+            </Link>
+          </div>
         </div>
       </section>
 

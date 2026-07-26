@@ -9,8 +9,8 @@ export const routes = {
 } as const;
 
 export const publicNavigation = [
-  { label: "Courses", href: "#courses" },
-  { label: "Platform", href: "#platform" },
-  { label: "Security", href: "#security" },
-  { label: "Admin", href: "#admin" },
+  { label: "Courses", href: "/courses" },
+  { label: "Platform", href: "/#platform" },
+  { label: "Security", href: "/#security" },
+  { label: "Admin", href: "/#admin" },
 ] as const;

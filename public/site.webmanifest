@@ -1,0 +1,24 @@
+{
+  "name": "APOLLO GLOBAL ACADEMY",
+  "short_name": "AGA LMS",
+  "description": "Premium learning management platform for structured courses, secure quizzes, verified certificates, and admin reporting.",
+  "start_url": "/AGA-LMS/",
+  "scope": "/AGA-LMS/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#020617",
+  "icons": [
+    {
+      "src": "/AGA-LMS/favicon.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/AGA-LMS/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

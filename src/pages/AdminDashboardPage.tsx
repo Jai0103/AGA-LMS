@@ -48,14 +48,20 @@ export function AdminDashboardPage() {
             Monitor users, courses, enrolments, quiz attempts, certificates, and backend activity.
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <Link to="/admin/users">
-              <Button variant="secondary">Manage users</Button>
-            </Link>
-            <Link to="/admin/courses">
-              <Button variant="secondary">Manage courses</Button>
-            </Link>
-          </div>
+<div className="mt-6 flex flex-wrap gap-3">
+  <Link to="/admin/users">
+    <Button variant="secondary">Manage users</Button>
+  </Link>
+  <Link to="/admin/courses">
+    <Button variant="secondary">Manage courses</Button>
+  </Link>
+  <Link to="/admin/enrolments">
+    <Button variant="secondary">View enrolments</Button>
+  </Link>
+  <Link to="/admin/reports">
+    <Button variant="secondary">Reports</Button>
+  </Link>
+</div>
         </div>
       </section>
 

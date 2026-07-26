@@ -61,6 +61,9 @@ export function AdminDashboardPage() {
   <Link to="/admin/reports">
     <Button variant="secondary">Reports</Button>
   </Link>
+  <Link to="/admin/settings">
+    <Button variant="secondary">Platform settings</Button>
+  </Link>
 </div>
         </div>
       </section>

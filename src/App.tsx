@@ -16,12 +16,14 @@ import { CertificateVerificationPage } from "./pages/CertificateVerificationPage
 import { CertificatesPage } from "./pages/CertificatesPage";
 import { CourseDetailsPage } from "./pages/CourseDetailsPage";
 import { CoursePlayerPage } from "./pages/CoursePlayerPage";
+import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
 import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { QuizPage } from "./pages/QuizPage";
 import { RegisterPage } from "./pages/RegisterPage";
+import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { StudentDashboardPage } from "./pages/StudentDashboardPage";
 
 function App() {
@@ -36,6 +38,8 @@ function App() {
             <Route path="/verify-certificate" element={<CertificateVerificationPage />} />
             <Route path="/verify-certificate/:certificateCode" element={<CertificateVerificationPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
             <Route path="/register" element={<RegisterPage />} />
 
             <Route

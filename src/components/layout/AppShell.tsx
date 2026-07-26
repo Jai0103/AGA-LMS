@@ -52,13 +52,13 @@ export function AppShell() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-950">
+    <div className="min-h-screen text-ink">
       <DocumentHead />
-      <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-brand-100 bg-white/90 shadow-sm shadow-brand-500/5 backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex min-h-20 items-center justify-between gap-4">
             <Link to="/" className="flex items-center gap-3" onClick={() => setIsMobileOpen(false)}>
-              <div className="flex h-14 w-[9rem] items-center justify-center overflow-hidden rounded-2xl bg-black px-2 shadow-sm sm:w-[12rem]">
+              <div className="flex h-14 w-[9rem] items-center justify-center overflow-hidden sm:w-[12rem]">
                 <img
                   src={`${import.meta.env.BASE_URL}aga-logo.png`}
                   alt={settings.platformName}
@@ -71,7 +71,7 @@ export function AppShell() {
                 <p className="max-w-[13rem] truncate text-lg font-black tracking-tight sm:max-w-[18rem]">
                   {settings.platformName}
                 </p>
-                <p className="text-xs font-semibold text-slate-500">Premium learning platform</p>
+                <p className="text-xs font-bold text-brand-600">Premium learning platform</p>
               </div>
             </Link>
 
@@ -82,10 +82,10 @@ export function AppShell() {
                 </HeaderLink>
               ))}
 
-              <a href="/AGA-LMS/#/#platform" className="rounded-full px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100">
+              <a href="/AGA-LMS/#/#platform" className="rounded-full px-4 py-2 text-sm font-bold text-brand-700 transition hover:bg-brand-50">
                 Platform
               </a>
-              <a href="/AGA-LMS/#/#security" className="rounded-full px-4 py-2 text-sm font-bold text-slate-700 transition hover:bg-slate-100">
+              <a href="/AGA-LMS/#/#security" className="rounded-full px-4 py-2 text-sm font-bold text-brand-700 transition hover:bg-brand-50">
                 Security
               </a>
 
@@ -105,7 +105,7 @@ export function AppShell() {
                   <button
                     type="button"
                     onClick={() => setIsAccountOpen((value) => !value)}
-                    className="inline-flex items-center gap-3 rounded-full border border-slate-200 bg-white py-1.5 pl-2 pr-3 text-sm font-bold text-slate-900 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+                    className="inline-flex items-center gap-3 rounded-full border border-brand-100 bg-white py-1.5 pl-2 pr-3 text-sm font-bold text-ink shadow-sm transition hover:border-brand-500 hover:bg-brand-50"
                     aria-expanded={isAccountOpen}
                   >
                     <UserAvatar name={user?.fullName ?? "AGA"} />
@@ -128,7 +128,7 @@ export function AppShell() {
                   <HeaderLink to="/login">Log in</HeaderLink>
                   <Link
                     to="/register"
-                    className="inline-flex items-center justify-center rounded-full bg-slate-950 px-5 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-slate-800"
+                    className="inline-flex items-center justify-center rounded-full bg-accent-500 px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-accent-500/20 transition hover:bg-accent-600"
                   >
                     Get started
                   </Link>
@@ -139,7 +139,7 @@ export function AppShell() {
             <button
               type="button"
               onClick={() => setIsMobileOpen((value) => !value)}
-              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-900 lg:hidden"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-brand-100 bg-white text-brand-700 lg:hidden"
               aria-label="Open navigation"
             >
               {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -154,10 +154,10 @@ export function AppShell() {
                     {link.label}
                   </MobileLink>
                 ))}
-                <a href="/AGA-LMS/#/#platform" className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100">
+                <a href="/AGA-LMS/#/#platform" className="rounded-2xl px-4 py-3 text-sm font-bold text-brand-700 hover:bg-brand-50">
                   Platform
                 </a>
-                <a href="/AGA-LMS/#/#security" className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100">
+                <a href="/AGA-LMS/#/#security" className="rounded-2xl px-4 py-3 text-sm font-bold text-brand-700 hover:bg-brand-50">
                   Security
                 </a>
 
@@ -184,14 +184,14 @@ export function AppShell() {
                     ) : null}
                     <a
                       href={`mailto:${settings.supportEmail}`}
-                      className="rounded-2xl px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100"
+                      className="rounded-2xl px-4 py-3 text-sm font-bold text-brand-700 hover:bg-brand-50"
                     >
                       Help Center
                     </a>
                     <button
                       type="button"
                       onClick={handleLogout}
-                      className="rounded-2xl px-4 py-3 text-left text-sm font-bold text-slate-700 hover:bg-slate-100"
+                      className="rounded-2xl px-4 py-3 text-left text-sm font-bold text-brand-700 hover:bg-brand-50"
                     >
                       Log Out
                     </button>
@@ -204,7 +204,7 @@ export function AppShell() {
                     <Link
                       to="/register"
                       onClick={() => setIsMobileOpen(false)}
-                      className="rounded-2xl bg-slate-950 px-4 py-3 text-center text-sm font-bold text-white"
+                      className="rounded-2xl bg-accent-500 px-4 py-3 text-center text-sm font-bold text-white"
                     >
                       Get started
                     </Link>
@@ -229,8 +229,8 @@ export function AppShell() {
         <Outlet />
       </main>
 
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-sm font-semibold text-slate-500 sm:px-6 lg:px-8">
+      <footer className="border-t border-brand-100 bg-white/90">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-sm font-semibold text-muted sm:px-6 lg:px-8">
           <p>{settings.platformName} - React, TypeScript, Vite, Tailwind CSS</p>
           <p>Support: {settings.supportEmail} - API connected through Apps Script - Build 2026</p>
         </div>
@@ -308,7 +308,7 @@ function HeaderLink({ to, children }: { to: string; children: ReactNode }) {
       className={({ isActive }) =>
         [
           "rounded-full px-4 py-2 text-sm font-bold transition",
-          isActive ? "bg-slate-950 text-white" : "text-slate-700 hover:bg-slate-100",
+          isActive ? "bg-accent-500 text-white shadow-sm shadow-accent-500/20" : "text-brand-700 hover:bg-brand-50",
         ].join(" ")
       }
     >
@@ -325,7 +325,7 @@ function MobileLink({ to, children, onClick }: { to: string; children: ReactNode
       className={({ isActive }) =>
         [
           "rounded-2xl px-4 py-3 text-sm font-bold transition",
-          isActive ? "bg-slate-950 text-white" : "text-slate-700 hover:bg-slate-100",
+          isActive ? "bg-accent-500 text-white" : "text-brand-700 hover:bg-brand-50",
         ].join(" ")
       }
     >
@@ -349,9 +349,9 @@ function DropdownLink({
     <Link
       to={to}
       onClick={onClick}
-      className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+      className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-brand-700 transition hover:bg-brand-50"
     >
-      <span className="text-slate-500">{icon}</span>
+      <span className="text-brand-600">{icon}</span>
       {children}
     </Link>
   );
@@ -366,7 +366,7 @@ function UserAvatar({ name }: { name: string }) {
     .join("");
 
   return (
-    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-950 text-sm font-black text-white">
+    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-700 text-sm font-black text-white">
       {initials || "A"}
     </span>
   );

@@ -136,13 +136,13 @@ export function StudentDashboardPage() {
                   <ProgressBar value={item.enrolment.progressPercent} />
                 </div>
 
-                <Link
-                  to={`/courses/${item.course.slug}`}
-                  className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-brand-700 hover:text-brand-600"
-                >
-                  Continue course
-                  <ArrowRight size={16} aria-hidden="true" />
-                </Link>
+<Link
+  to={`/learn/${item.course.courseId}`}
+  className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-brand-700 hover:text-brand-600"
+>
+  Continue course
+  <ArrowRight size={16} aria-hidden="true" />
+</Link>
               </Card>
             ))}
           </div>

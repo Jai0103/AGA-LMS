@@ -17,6 +17,7 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import { QuizPage } from "./pages/QuizPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { StudentDashboardPage } from "./pages/StudentDashboardPage";
+import { AdminCreateCoursePage } from "./pages/AdminCreateCoursePage";
 
 function App() {
   return (
@@ -77,6 +78,15 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            <Route
+  path="/admin/courses/new"
+  element={
+    <ProtectedRoute allowedRoles={["ADMIN"]}>
+      <AdminCreateCoursePage />
+    </ProtectedRoute>
+  }
+/>
             <Route
               path="/admin/courses"
               element={

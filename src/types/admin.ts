@@ -1,6 +1,7 @@
 import type { AuthUser, UserRole } from "./auth";
 import type { Certificate } from "./certificate";
 import type { Enrolment } from "./enrolment";
+import type { PlayerLesson } from "./progress";
 import type { PublicCourseFromApi } from "../lib/courseApi";
 
 export type AdminMetrics = {
@@ -76,12 +77,6 @@ export type AdminUpdateCourseStatusData = {
   course: PublicCourseFromApi;
 };
 
-export type AdminUserStatus = "ACTIVE" | "SUSPENDED" | "PENDING";
-
-export type AdminAssignableRole = Exclude<UserRole, "VISITOR">;
-
-export type AdminCourseStatus = "Published" | "Draft";
-
 export type AdminCreateCoursePayload = {
   title: string;
   subtitle: string;
@@ -98,11 +93,6 @@ export type AdminCreateCoursePayload = {
 export type AdminCreateCourseData = {
   course: PublicCourseFromApi;
 };
-
-
-
-
-import type { PlayerLesson } from "./progress";
 
 export type AdminLessonsData = {
   course: PublicCourseFromApi;
@@ -124,3 +114,9 @@ export type AdminCreateLessonData = {
   lesson: PlayerLesson;
   lessonsCount: number;
 };
+
+export type AdminUserStatus = "ACTIVE" | "SUSPENDED" | "PENDING";
+
+export type AdminAssignableRole = Exclude<UserRole, "VISITOR">;
+
+export type AdminCourseStatus = "Published" | "Draft";

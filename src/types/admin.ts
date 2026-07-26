@@ -1,4 +1,4 @@
-import type { AuthUser } from "./auth";
+import type { AuthUser, UserRole } from "./auth";
 import type { Certificate } from "./certificate";
 import type { Enrolment } from "./enrolment";
 import type { PublicCourseFromApi } from "../lib/courseApi";
@@ -63,3 +63,15 @@ export type AdminCoursesData = {
 export type AdminEnrolmentsData = {
   enrolments: Enrolment[];
 };
+
+export type AdminUpdateUserRoleData = {
+  user: AuthUser;
+};
+
+export type AdminUpdateUserStatusData = {
+  user: AuthUser;
+};
+
+export type AdminUserStatus = "ACTIVE" | "SUSPENDED" | "PENDING";
+
+export type AdminAssignableRole = Exclude<UserRole, "VISITOR">;

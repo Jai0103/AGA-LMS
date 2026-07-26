@@ -1,5 +1,7 @@
 import { apiRequest } from "./apiClient";
 import type {
+  AdminAddQuizQuestionData,
+  AdminAddQuizQuestionPayload,
   AdminAssignableRole,
   AdminCourseStatus,
   AdminCoursesData,
@@ -12,8 +14,11 @@ import type {
   AdminDetailedReportsData,
   AdminEnrolmentsData,
   AdminLessonsData,
+  AdminQuizSetupData,
   AdminReportsData,
   AdminResourcesData,
+  AdminSaveQuizData,
+  AdminSaveQuizPayload,
   AdminUpdateCourseStatusData,
   AdminUpdateUserRoleData,
   AdminUpdateUserStatusData,
@@ -100,6 +105,30 @@ export function adminListResources(courseId: string, sessionToken: string) {
 export function adminCreateResource(payload: AdminCreateResourcePayload, sessionToken: string) {
   return apiRequest<AdminCreateResourceData, AdminCreateResourcePayload>(
     "adminCreateResource",
+    payload,
+    sessionToken,
+  );
+}
+
+export function adminGetQuizSetup(courseId: string, sessionToken: string) {
+  return apiRequest<AdminQuizSetupData, { courseId: string }>(
+    "adminGetQuizSetup",
+    { courseId },
+    sessionToken,
+  );
+}
+
+export function adminSaveQuiz(payload: AdminSaveQuizPayload, sessionToken: string) {
+  return apiRequest<AdminSaveQuizData, AdminSaveQuizPayload>(
+    "adminSaveQuiz",
+    payload,
+    sessionToken,
+  );
+}
+
+export function adminAddQuizQuestion(payload: AdminAddQuizQuestionPayload, sessionToken: string) {
+  return apiRequest<AdminAddQuizQuestionData, AdminAddQuizQuestionPayload>(
+    "adminAddQuizQuestion",
     payload,
     sessionToken,
   );

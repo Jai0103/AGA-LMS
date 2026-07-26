@@ -37,11 +37,11 @@ export function DocumentHead() {
     setMetaProperty("og:description", description);
     setMetaProperty("og:type", "website");
     setMetaProperty("og:url", window.location.origin + import.meta.env.BASE_URL);
-    setMetaProperty("og:image", window.location.origin + import.meta.env.BASE_URL + "brand-social.svg");
+    setMetaProperty("og:image", window.location.origin + import.meta.env.BASE_URL + "aga-logo.png");
     setMeta("twitter:card", "summary_large_image");
     setMeta("twitter:title", fullTitle);
     setMeta("twitter:description", description);
-    setMeta("twitter:image", window.location.origin + import.meta.env.BASE_URL + "brand-social.svg");
+    setMeta("twitter:image", window.location.origin + import.meta.env.BASE_URL + "aga-logo.png");
   }, [location.pathname, settings.platformName]);
 
   return null;

@@ -12,6 +12,7 @@ import { AdminReportsPage } from "./pages/AdminReportsPage";
 import { AdminResourcesPage } from "./pages/AdminResourcesPage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { CataloguePage } from "./pages/CataloguePage";
+import { CertificateVerificationPage } from "./pages/CertificateVerificationPage";
 import { CertificatesPage } from "./pages/CertificatesPage";
 import { CourseDetailsPage } from "./pages/CourseDetailsPage";
 import { CoursePlayerPage } from "./pages/CoursePlayerPage";
@@ -31,6 +32,8 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/courses" element={<CataloguePage />} />
             <Route path="/courses/:slug" element={<CourseDetailsPage />} />
+            <Route path="/verify-certificate" element={<CertificateVerificationPage />} />
+            <Route path="/verify-certificate/:certificateCode" element={<CertificateVerificationPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
 

@@ -35,6 +35,17 @@ export type AdminAuditLog = {
   createdAt: string;
 };
 
+export type AdminResource = {
+  resourceId: string;
+  courseId: string;
+  lessonId: string;
+  title: string;
+  type: "PDF" | "Template" | "Link" | "Checklist";
+  driveFileId: string;
+  url: string;
+  createdAt: string;
+};
+
 export type AdminReportsData = {
   metrics: AdminMetrics;
   recentUsers: AuthUser[];
@@ -113,6 +124,24 @@ export type AdminCreateLessonPayload = {
 export type AdminCreateLessonData = {
   lesson: PlayerLesson;
   lessonsCount: number;
+};
+
+export type AdminResourcesData = {
+  course: PublicCourseFromApi;
+  resources: AdminResource[];
+};
+
+export type AdminCreateResourcePayload = {
+  courseId: string;
+  lessonId: string;
+  title: string;
+  type: AdminResource["type"];
+  driveFileId: string;
+  url: string;
+};
+
+export type AdminCreateResourceData = {
+  resource: AdminResource;
 };
 
 export type AdminUserStatus = "ACTIVE" | "SUSPENDED" | "PENDING";

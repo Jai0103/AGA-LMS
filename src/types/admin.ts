@@ -81,3 +81,20 @@ export type AdminUserStatus = "ACTIVE" | "SUSPENDED" | "PENDING";
 export type AdminAssignableRole = Exclude<UserRole, "VISITOR">;
 
 export type AdminCourseStatus = "Published" | "Draft";
+
+export type AdminCreateCoursePayload = {
+  title: string;
+  subtitle: string;
+  category: string;
+  level: "Beginner" | "Intermediate" | "Advanced";
+  description: string;
+  trainerName: string;
+  duration: string;
+  durationMinutes: number;
+  lessonsCount: number;
+  status: AdminCourseStatus;
+};
+
+export type AdminCreateCourseData = {
+  course: PublicCourseFromApi;
+};

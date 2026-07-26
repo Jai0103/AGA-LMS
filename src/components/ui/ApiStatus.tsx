@@ -16,23 +16,34 @@ export function ApiStatus() {
   useEffect(() => {
     let isMounted = true;
 
-    healthCheck().then((response) => {
-      if (!isMounted) {
-        return;
-      }
+    healthCheck()
+      .then((response) => {
+        if (!isMounted) {
+          return;
+        }
 
-      if (response.ok) {
-        setStatus({
-          type: "success",
-          message: `Backend online · API ${response.data.apiVersion}`,
-        });
-      } else {
+        if (response.ok) {
+          setStatus({
+            type: "success",
+            message: `Backend online - API ${response.data.apiVersion}`,
+          });
+        } else {
+          setStatus({
+            type: "error",
+            message: response.error.message,
+          });
+        }
+      })
+      .catch((caughtError) => {
+        if (!isMounted) {
+          return;
+        }
+
         setStatus({
           type: "error",
-          message: response.error.message,
+          message: caughtError instanceof Error ? caughtError.message : "Backend status unavailable",
         });
-      }
-    });
+      });
 
     return () => {
       isMounted = false;

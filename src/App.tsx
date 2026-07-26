@@ -19,6 +19,7 @@ import { CoursePlayerPage } from "./pages/CoursePlayerPage";
 import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import { QuizPage } from "./pages/QuizPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { StudentDashboardPage } from "./pages/StudentDashboardPage";
@@ -42,6 +43,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <StudentDashboardPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
                 </ProtectedRoute>
               }
             />

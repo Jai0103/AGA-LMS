@@ -11,41 +11,15 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { CourseCard } from "../components/course/CourseCard";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { ProgressBar } from "../components/ui/ProgressBar";
-import type { FeaturedCourse } from "../types/course";
+import { courses } from "../data/courses";
 
-const featuredCourses: FeaturedCourse[] = [
-  {
-    courseId: "course-leadership",
-    title: "Applied Leadership Essentials",
-    category: "Leadership",
-    level: "Beginner",
-    lessons: 18,
-    duration: "4h 20m",
-    description: "Build confident decision-making, communication habits, and team leadership foundations.",
-  },
-  {
-    courseId: "course-cybersecurity",
-    title: "Cybersecurity Awareness",
-    category: "Security",
-    level: "Intermediate",
-    lessons: 22,
-    duration: "5h 10m",
-    description: "Learn practical cyber hygiene, phishing defense, data handling, and workplace security routines.",
-  },
-  {
-    courseId: "course-productivity",
-    title: "Digital Productivity Systems",
-    category: "Operations",
-    level: "Beginner",
-    lessons: 15,
-    duration: "3h 45m",
-    description: "Create repeatable workflows for planning, tracking, reviewing, and improving daily work.",
-  },
-];
+const featuredCourses = courses.filter((course) => course.featured).slice(0, 3);
 
 const capabilities = [
   { icon: BookOpen, title: "Structured Courses", text: "Catalogue, course details, lessons, videos, notes, and resources." },
@@ -79,10 +53,12 @@ export function LandingPage() {
               Google Sheets records, Google Drive storage, and GitHub Pages hosting.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Button>
-                Explore courses
-                <ArrowRight size={18} aria-hidden="true" />
-              </Button>
+              <Link to="/courses">
+                <Button>
+                  Explore courses
+                  <ArrowRight size={18} aria-hidden="true" />
+                </Button>
+              </Link>
               <Button variant="secondary">
                 <PlayCircle size={18} aria-hidden="true" />
                 View platform preview
@@ -127,26 +103,17 @@ export function LandingPage() {
               <p className="text-sm font-bold uppercase tracking-normal text-brand-700">Featured courses</p>
               <h2 className="mt-2 text-3xl font-bold text-ink">Start with high-impact learning paths</h2>
             </div>
-            <Button variant="secondary">
-              View catalogue
-              <ArrowRight size={16} aria-hidden="true" />
-            </Button>
+            <Link to="/courses">
+              <Button variant="secondary">
+                View catalogue
+                <ArrowRight size={16} aria-hidden="true" />
+              </Button>
+            </Link>
           </div>
 
           <div className="grid gap-5 md:grid-cols-3">
             {featuredCourses.map((course) => (
-              <Card key={course.courseId} className="p-5">
-                <div className="mb-5 flex items-center justify-between">
-                  <Badge tone="brand">{course.category}</Badge>
-                  <span className="text-xs font-semibold text-muted">{course.level}</span>
-                </div>
-                <h3 className="text-xl font-bold text-ink">{course.title}</h3>
-                <p className="mt-3 min-h-20 text-sm leading-6 text-muted">{course.description}</p>
-                <div className="mt-5 flex items-center justify-between border-t border-line pt-4 text-sm font-semibold text-slate-600">
-                  <span>{course.lessons} lessons</span>
-                  <span>{course.duration}</span>
-                </div>
-              </Card>
+              <CourseCard key={course.courseId} course={course} />
             ))}
           </div>
         </div>

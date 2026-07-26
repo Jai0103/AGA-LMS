@@ -41,10 +41,10 @@ export function LandingPage() {
 
   return (
     <main>
-      <section className="bg-white">
+      <section className="overflow-hidden rounded-[2rem] border border-brand-100 bg-white/90 shadow-sm">
         <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:py-20">
           <div className="flex flex-col justify-center">
-            <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1 text-sm font-semibold text-brand-700">
+            <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-accent-100 bg-accent-50 px-3 py-1 text-sm font-bold text-accent-700">
               <Sparkles size={15} aria-hidden="true" />
               Built for secure professional learning
             </div>
@@ -69,7 +69,7 @@ export function LandingPage() {
             </div>
           </div>
 
-          <div className="rounded-lg border border-line bg-slate-950 p-4 shadow-soft">
+          <div className="rounded-[1.5rem] border border-brand-100 bg-gradient-to-br from-brand-700 via-brand-600 to-accent-600 p-4 shadow-soft">
             <div className="rounded-lg bg-white p-5">
               <div className="mb-5 flex items-center justify-between">
                 <div>
@@ -80,7 +80,7 @@ export function LandingPage() {
               </div>
               <div className="grid gap-3 sm:grid-cols-2">
                 {["10 Courses", "4 Roles", "Secure API", "GitHub Pages"].map((item) => (
-                  <div key={item} className="rounded-lg border border-line bg-slate-50 p-4">
+                  <div key={item} className="rounded-lg border border-brand-100 bg-brand-50 p-4">
                     <p className="text-2xl font-bold text-ink">{item.split(" ")[0]}</p>
                     <p className="mt-1 text-xs font-medium text-muted">{item.replace(item.split(" ")[0], "").trim()}</p>
                   </div>
@@ -99,7 +99,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section id="courses" className="border-y border-line bg-slate-50">
+      <section id="courses" className="border-y border-brand-100 bg-gradient-to-br from-brand-50 via-white to-accent-50">
         <div className="mx-auto max-w-7xl px-6 py-14">
           <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
@@ -134,7 +134,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section id="security" className="border-y border-line bg-ink text-white">
+      <section id="security" className="border-y border-brand-700 bg-gradient-to-br from-ink via-brand-700 to-accent-700 text-white">
         <div className="mx-auto grid max-w-7xl gap-8 px-6 py-14 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
             <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-lg bg-white/10">

@@ -3,44 +3,23 @@ import type {
   AdminAssignableRole,
   AdminCourseStatus,
   AdminCoursesData,
+  AdminCreateCourseData,
+  AdminCreateCoursePayload,
+  AdminCreateLessonData,
+  AdminCreateLessonPayload,
+  AdminCreateResourceData,
+  AdminCreateResourcePayload,
   AdminDetailedReportsData,
   AdminEnrolmentsData,
+  AdminLessonsData,
   AdminReportsData,
+  AdminResourcesData,
   AdminUpdateCourseStatusData,
   AdminUpdateUserRoleData,
   AdminUpdateUserStatusData,
   AdminUsersData,
   AdminUserStatus,
-  AdminCreateCourseData,
-AdminCreateCoursePayload,
-  AdminCreateLessonData,
-AdminCreateLessonPayload,
-AdminLessonsData,
 } from "../types/admin";
-
-
-export function adminListLessons(courseId: string, sessionToken: string) {
-  return apiRequest<AdminLessonsData, { courseId: string }>(
-    "adminListLessons",
-    { courseId },
-    sessionToken,
-  );
-}
-
-export function adminCreateLesson(payload: AdminCreateLessonPayload, sessionToken: string) {
-  return apiRequest<AdminCreateLessonData, AdminCreateLessonPayload>(
-    "adminCreateLesson",
-    payload,
-    sessionToken,
-  );
-}
-export function adminCreateCourse(payload: AdminCreateCoursePayload, sessionToken: string) {
-  return apiRequest<AdminCreateCourseData, AdminCreateCoursePayload>(
-    "adminCreateCourse",
-    payload,
-    sessionToken,
-  );
-}
 
 export function adminReports(sessionToken: string) {
   return apiRequest<AdminReportsData>("adminReports", {}, sessionToken);
@@ -82,6 +61,46 @@ export function adminUpdateCourseStatus(courseId: string, status: AdminCourseSta
   return apiRequest<AdminUpdateCourseStatusData, { courseId: string; status: AdminCourseStatus }>(
     "adminUpdateCourseStatus",
     { courseId, status },
+    sessionToken,
+  );
+}
+
+export function adminCreateCourse(payload: AdminCreateCoursePayload, sessionToken: string) {
+  return apiRequest<AdminCreateCourseData, AdminCreateCoursePayload>(
+    "adminCreateCourse",
+    payload,
+    sessionToken,
+  );
+}
+
+export function adminListLessons(courseId: string, sessionToken: string) {
+  return apiRequest<AdminLessonsData, { courseId: string }>(
+    "adminListLessons",
+    { courseId },
+    sessionToken,
+  );
+}
+
+export function adminCreateLesson(payload: AdminCreateLessonPayload, sessionToken: string) {
+  return apiRequest<AdminCreateLessonData, AdminCreateLessonPayload>(
+    "adminCreateLesson",
+    payload,
+    sessionToken,
+  );
+}
+
+export function adminListResources(courseId: string, sessionToken: string) {
+  return apiRequest<AdminResourcesData, { courseId: string }>(
+    "adminListResources",
+    { courseId },
+    sessionToken,
+  );
+}
+
+export function adminCreateResource(payload: AdminCreateResourcePayload, sessionToken: string) {
+  return apiRequest<AdminCreateResourceData, AdminCreateResourcePayload>(
+    "adminCreateResource",
+    payload,
     sessionToken,
   );
 }

@@ -98,3 +98,29 @@ export type AdminCreateCoursePayload = {
 export type AdminCreateCourseData = {
   course: PublicCourseFromApi;
 };
+
+
+
+
+import type { PlayerLesson } from "./progress";
+
+export type AdminLessonsData = {
+  course: PublicCourseFromApi;
+  lessons: PlayerLesson[];
+};
+
+export type AdminCreateLessonPayload = {
+  courseId: string;
+  title: string;
+  type: "Video" | "Reading" | "Quiz" | "Resource";
+  durationMinutes: number;
+  isPreview: boolean;
+  sortOrder: number;
+  videoUrl: string;
+  notes: string;
+};
+
+export type AdminCreateLessonData = {
+  lesson: PlayerLesson;
+  lessonsCount: number;
+};

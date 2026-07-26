@@ -27,6 +27,6 @@ export type IssueCertificateData = {
   alreadyIssued: boolean;
 };
 
-export type ListMyCertificatesData = {
+export type MyCertificatesData = {
   certificates: CertificateWithCourse[];
 };

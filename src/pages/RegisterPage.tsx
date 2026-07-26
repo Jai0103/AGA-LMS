@@ -1,9 +1,10 @@
 import { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CheckCircle2, UserPlus } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
+import { useAuth } from "../context/AuthContext";
 import { isStrongPassword, isValidEmail } from "../lib/formValidation";
 
 type RegisterErrors = {
@@ -14,15 +15,17 @@ type RegisterErrors = {
 };
 
 export function RegisterPage() {
+  const navigate = useNavigate();
+  const { register, isLoading, authError, clearAuthError } = useAuth();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<RegisterErrors>({});
-  const [notice, setNotice] = useState("");
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    clearAuthError();
 
     const nextErrors: RegisterErrors = {};
 
@@ -45,7 +48,11 @@ export function RegisterPage() {
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length === 0) {
-      setNotice("Frontend validation passed. Account creation will be securely handled by Apps Script in the backend step.");
+      const success = await register({ fullName, email, password });
+
+      if (success) {
+        navigate("/courses");
+      }
     }
   }
 
@@ -55,7 +62,7 @@ export function RegisterPage() {
         <Card className="mx-auto w-full max-w-md p-6">
           <h1 className="text-2xl font-bold text-ink">Create your account</h1>
           <p className="mt-2 text-sm leading-6 text-muted">
-            Registration will create a Student account after backend validation.
+            Registration creates a Student account after backend validation.
           </p>
 
           <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
@@ -104,14 +111,14 @@ export function RegisterPage() {
               onChange={(event) => setConfirmPassword(event.target.value)}
             />
 
-            {notice ? (
-              <div className="rounded-lg border border-brand-100 bg-brand-50 p-3 text-sm font-semibold leading-6 text-brand-700">
-                {notice}
+            {authError ? (
+              <div className="rounded-lg border border-red-100 bg-red-50 p-3 text-sm font-semibold leading-6 text-red-700">
+                {authError}
               </div>
             ) : null}
 
-            <Button type="submit" className="w-full">
-              Create account
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Creating account..." : "Create account"}
             </Button>
           </form>
 
@@ -129,7 +136,7 @@ export function RegisterPage() {
           </div>
           <h2 className="max-w-xl text-4xl font-bold text-ink">Start with secure student access.</h2>
           <p className="mt-4 max-w-xl leading-7 text-muted">
-            The backend will validate every field, hash passwords, create sessions, and assign safe default roles.
+            The backend validates every field, hashes passwords, creates sessions, and assigns safe default roles.
           </p>
 
           <div className="mt-8 space-y-3">

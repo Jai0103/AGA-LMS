@@ -6,32 +6,40 @@ import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { ProgressBar } from "../components/ui/ProgressBar";
 import { useAuth } from "../context/AuthContext";
+import { listMyCertificates } from "../lib/certificateApi";
 import { listMyEnrolments } from "../lib/enrolmentApi";
+import type { CertificateWithCourse } from "../types/certificate";
 import type { EnrolmentWithCourse } from "../types/enrolment";
 
 export function StudentDashboardPage() {
   const { user, sessionToken } = useAuth();
   const [enrolments, setEnrolments] = useState<EnrolmentWithCourse[]>([]);
+  const [certificates, setCertificates] = useState<CertificateWithCourse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
     let isMounted = true;
 
-    listMyEnrolments(sessionToken).then((response) => {
-      if (!isMounted) {
-        return;
-      }
+    Promise.all([listMyEnrolments(sessionToken), listMyCertificates(sessionToken)]).then(
+      ([enrolmentsResponse, certificatesResponse]) => {
+        if (!isMounted) {
+          return;
+        }
 
-      if (response.ok) {
-        setEnrolments(response.data.enrolments);
-        setNotice("");
-      } else {
-        setNotice(response.error.message);
-      }
+        if (enrolmentsResponse.ok) {
+          setEnrolments(enrolmentsResponse.data.enrolments);
+        } else {
+          setNotice(enrolmentsResponse.error.message);
+        }
 
-      setIsLoading(false);
-    });
+        if (certificatesResponse.ok) {
+          setCertificates(certificatesResponse.data.certificates);
+        }
+
+        setIsLoading(false);
+      },
+    );
 
     return () => {
       isMounted = false;
@@ -70,7 +78,7 @@ export function StudentDashboardPage() {
             </Card>
             <Card className="p-5">
               <Award className="text-brand-600" size={24} aria-hidden="true" />
-              <p className="mt-4 text-3xl font-bold text-ink">0</p>
+              <p className="mt-4 text-3xl font-bold text-ink">{certificates.length}</p>
               <p className="mt-1 text-sm font-semibold text-muted">Certificates issued</p>
             </Card>
           </div>
@@ -83,9 +91,14 @@ export function StudentDashboardPage() {
             <h2 className="text-2xl font-bold text-ink">My learning</h2>
             <p className="mt-1 text-sm text-muted">Courses enrolled through the secure backend.</p>
           </div>
-          <Link to="/courses">
-            <Button variant="secondary">Browse more courses</Button>
-          </Link>
+          <div className="flex flex-wrap gap-3">
+            <Link to="/certificates">
+              <Button variant="secondary">View certificates</Button>
+            </Link>
+            <Link to="/courses">
+              <Button variant="secondary">Browse more courses</Button>
+            </Link>
+          </div>
         </div>
 
         {isLoading ? (
@@ -136,13 +149,13 @@ export function StudentDashboardPage() {
                   <ProgressBar value={item.enrolment.progressPercent} />
                 </div>
 
-<Link
-  to={`/learn/${item.course.courseId}`}
-  className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-brand-700 hover:text-brand-600"
->
-  Continue course
-  <ArrowRight size={16} aria-hidden="true" />
-</Link>
+                <Link
+                  to={`/learn/${item.course.courseId}`}
+                  className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-brand-700 hover:text-brand-600"
+                >
+                  Continue course
+                  <ArrowRight size={16} aria-hidden="true" />
+                </Link>
               </Card>
             ))}
           </div>

@@ -3,7 +3,6 @@ import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   Award,
   ChevronDown,
-  GraduationCap,
   HelpCircle,
   LayoutDashboard,
   LogOut,
@@ -17,6 +16,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { usePlatformSettings } from "../../context/PlatformSettingsContext";
+import { DocumentHead } from "./DocumentHead";
 
 const publicLinks = [
   { to: "/courses", label: "Courses" },
@@ -53,12 +53,19 @@ export function AppShell() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
+      <DocumentHead />
       <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex min-h-20 items-center justify-between gap-4">
             <Link to="/" className="flex items-center gap-3" onClick={() => setIsMobileOpen(false)}>
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-white shadow-sm">
-                <GraduationCap className="h-6 w-6" />
+              <div className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-2xl bg-slate-950 text-white shadow-sm">
+                <img
+                  src={`${import.meta.env.BASE_URL}brand-mark.svg`}
+                  alt=""
+                  className="h-11 w-11"
+                  width="44"
+                  height="44"
+                />
               </div>
               <div>
                 <p className="max-w-[13rem] truncate text-lg font-black tracking-tight sm:max-w-[18rem]">

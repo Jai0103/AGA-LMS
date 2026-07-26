@@ -11,7 +11,17 @@ import type {
   AdminUpdateUserStatusData,
   AdminUsersData,
   AdminUserStatus,
+  AdminCreateCourseData,
+AdminCreateCoursePayload,
 } from "../types/admin";
+
+export function adminCreateCourse(payload: AdminCreateCoursePayload, sessionToken: string) {
+  return apiRequest<AdminCreateCourseData, AdminCreateCoursePayload>(
+    "adminCreateCourse",
+    payload,
+    sessionToken,
+  );
+}
 
 export function adminReports(sessionToken: string) {
   return apiRequest<AdminReportsData>("adminReports", {}, sessionToken);

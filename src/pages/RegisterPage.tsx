@@ -17,6 +17,7 @@ type RegisterErrors = {
 export function RegisterPage() {
   const navigate = useNavigate();
   const { register, isLoading, authError, clearAuthError } = useAuth();
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,7 +49,11 @@ export function RegisterPage() {
     setErrors(nextErrors);
 
     if (Object.keys(nextErrors).length === 0) {
-      const success = await register({ fullName, email, password });
+      const success = await register({
+        fullName,
+        email,
+        password,
+      });
 
       if (success) {
         navigate("/courses");
@@ -134,7 +139,11 @@ export function RegisterPage() {
           <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-lg bg-ink text-white">
             <UserPlus size={24} aria-hidden="true" />
           </div>
-          <h2 className="max-w-xl text-4xl font-bold text-ink">Start with secure student access.</h2>
+
+          <h2 className="max-w-xl text-4xl font-bold text-ink">
+            Start with secure student access.
+          </h2>
+
           <p className="mt-4 max-w-xl leading-7 text-muted">
             The backend validates every field, hashes passwords, creates sessions, and assigns safe default roles.
           </p>

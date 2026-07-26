@@ -13,8 +13,27 @@ import type {
   AdminUserStatus,
   AdminCreateCourseData,
 AdminCreateCoursePayload,
+  AdminCreateLessonData,
+AdminCreateLessonPayload,
+AdminLessonsData,
 } from "../types/admin";
 
+
+export function adminListLessons(courseId: string, sessionToken: string) {
+  return apiRequest<AdminLessonsData, { courseId: string }>(
+    "adminListLessons",
+    { courseId },
+    sessionToken,
+  );
+}
+
+export function adminCreateLesson(payload: AdminCreateLessonPayload, sessionToken: string) {
+  return apiRequest<AdminCreateLessonData, AdminCreateLessonPayload>(
+    "adminCreateLesson",
+    payload,
+    sessionToken,
+  );
+}
 export function adminCreateCourse(payload: AdminCreateCoursePayload, sessionToken: string) {
   return apiRequest<AdminCreateCourseData, AdminCreateCoursePayload>(
     "adminCreateCourse",

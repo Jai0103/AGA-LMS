@@ -28,6 +28,12 @@ export function CertificateVerificationPage() {
 
     try {
       const response = await verifyCertificate(cleanCode);
+
+      if (!response.ok) {
+        setError(response.error.message);
+        return;
+      }
+
       setResult(response.data);
     } catch (caughtError) {
       setError(caughtError instanceof Error ? caughtError.message : "Certificate verification failed.");

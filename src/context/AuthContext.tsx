@@ -17,15 +17,31 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function isSessionExpired(session: SessionState): boolean {
+  return new Date(session.expiresAt).getTime() <= Date.now();
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [session, setSession] = useState<SessionState | null>(() => loadSession());
+  const [session, setSession] = useState<SessionState | null>(() => {
+    const savedSession = loadSession();
+
+    if (!savedSession || isSessionExpired(savedSession)) {
+      clearSession();
+      return null;
+    }
+
+    return savedSession;
+  });
+
   const [isLoading, setIsLoading] = useState(false);
   const [authError, setAuthError] = useState("");
 
   useEffect(() => {
     const savedSession = loadSession();
 
-    if (!savedSession) {
+    if (!savedSession || isSessionExpired(savedSession)) {
+      clearSession();
+      setSession(null);
       return;
     }
 
@@ -43,6 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } else {
         clearSession();
         setSession(null);
+        setAuthError(response.error.message);
       }
 
       setIsLoading(false);

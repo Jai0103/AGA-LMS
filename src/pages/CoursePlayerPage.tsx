@@ -1,14 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   ArrowLeft,
+  ArrowRight,
   Award,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   ExternalLink,
   FileText,
   HelpCircle,
   Link as LinkIcon,
+  ListChecks,
   LockKeyhole,
   PlayCircle,
+  ShieldCheck,
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { Badge } from "../components/ui/Badge";
@@ -79,9 +84,16 @@ export function CoursePlayerPage() {
     return new Set(playerData?.progress.filter((item) => item.completed).map((item) => item.lessonId) ?? []);
   }, [playerData]);
 
-  const selectedLesson = useMemo<PlayerLesson | null>(() => {
-    return playerData?.lessons.find((lesson) => lesson.lessonId === selectedLessonId) ?? null;
+  const selectedLessonIndex = useMemo(() => {
+    return playerData?.lessons.findIndex((lesson) => lesson.lessonId === selectedLessonId) ?? -1;
   }, [playerData, selectedLessonId]);
+
+  const selectedLesson = useMemo<PlayerLesson | null>(() => {
+    return selectedLessonIndex >= 0 ? playerData?.lessons[selectedLessonIndex] ?? null : null;
+  }, [playerData, selectedLessonIndex]);
+
+  const previousLesson = selectedLessonIndex > 0 ? playerData?.lessons[selectedLessonIndex - 1] ?? null : null;
+  const nextLesson = playerData && selectedLessonIndex >= 0 ? playerData.lessons[selectedLessonIndex + 1] ?? null : null;
 
   const selectedLessonResources = useMemo(() => {
     return resources.filter((resource) => resource.lessonId === selectedLessonId);
@@ -90,6 +102,10 @@ export function CoursePlayerPage() {
   const courseLevelResources = useMemo(() => {
     return resources.filter((resource) => !resource.lessonId);
   }, [resources]);
+
+  const completedCount = completedLessonIds.size;
+  const lessonCount = playerData?.lessons.length ?? 0;
+  const localProgressPercent = lessonCount ? Math.round((completedCount / lessonCount) * 100) : 0;
 
   async function handleMarkComplete() {
     if (!playerData || !selectedLesson) {
@@ -149,6 +165,13 @@ export function CoursePlayerPage() {
     setNotice("Progress saved.");
   }
 
+  function goToLesson(lesson: PlayerLesson | null) {
+    if (lesson) {
+      setSelectedLessonId(lesson.lessonId);
+      setNotice("");
+    }
+  }
+
   if (isLoading) {
     return (
       <main className="bg-white">
@@ -175,105 +198,143 @@ export function CoursePlayerPage() {
   }
 
   const SelectedIcon = lessonIcons[selectedLesson.type];
+  const isSelectedComplete = completedLessonIds.has(selectedLesson.lessonId);
 
   return (
     <main className="min-h-screen bg-slate-50">
-      <section className="border-b border-line bg-white">
-        <div className="mx-auto max-w-7xl px-6 py-6">
-          <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-ink">
-            <ArrowLeft size={16} aria-hidden="true" />
-            Back to dashboard
-          </Link>
-
-          <div className="mt-5 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
-            <div>
-              <Badge tone="brand">{playerData.course.category}</Badge>
-              <h1 className="mt-3 text-3xl font-bold text-ink">{playerData.course.title}</h1>
-              <p className="mt-2 text-muted">{playerData.course.subtitle}</p>
+      <section className="sticky top-20 z-20 border-b border-line bg-white/95 backdrop-blur">
+        <div className="mx-auto max-w-7xl px-6 py-5">
+          <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
+            <div className="min-w-0">
+              <Link to="/dashboard" className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 hover:text-ink">
+                <ArrowLeft size={16} aria-hidden="true" />
+                Back to dashboard
+              </Link>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <Badge tone="brand">{playerData.course.category}</Badge>
+                <Badge>{playerData.course.level}</Badge>
+                <Badge tone={playerData.enrolment.status === "COMPLETED" ? "success" : "neutral"}>
+                  {playerData.enrolment.status}
+                </Badge>
+              </div>
+              <h1 className="mt-3 truncate text-2xl font-bold text-ink lg:text-3xl">{playerData.course.title}</h1>
             </div>
-            <div className="w-full max-w-sm">
+
+            <div className="w-full lg:max-w-sm">
               <div className="mb-2 flex justify-between text-sm font-bold text-slate-700">
                 <span>Course progress</span>
-                <span>{playerData.enrolment.progressPercent}%</span>
+                <span>{playerData.enrolment.progressPercent || localProgressPercent}%</span>
               </div>
-              <ProgressBar value={playerData.enrolment.progressPercent} />
+              <ProgressBar value={playerData.enrolment.progressPercent || localProgressPercent} />
+              <p className="mt-2 text-xs font-semibold text-muted">
+                {completedCount} of {lessonCount} lessons complete
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[320px_1fr]">
-        <aside className="space-y-3">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-sm font-bold uppercase tracking-normal text-muted">Lessons</h2>
-            <Link to={`/learn/${playerData.course.courseId}/quiz`} className="inline-flex">
-              <Button variant="secondary" className="px-3 py-2">
-                <Award size={16} aria-hidden="true" />
-                Quiz
-              </Button>
-            </Link>
-          </div>
+      <section className="mx-auto grid max-w-7xl gap-6 px-6 py-8 lg:grid-cols-[340px_1fr]">
+        <aside className="space-y-4 lg:sticky lg:top-48 lg:self-start">
+          <Card className="overflow-hidden">
+            <div className="border-b border-line p-5">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-normal text-muted">Course outline</p>
+                  <h2 className="mt-1 text-lg font-bold text-ink">{lessonCount} lessons</h2>
+                </div>
+                <Link to={`/learn/${playerData.course.courseId}/quiz`} className="inline-flex">
+                  <Button variant="secondary" className="px-3 py-2">
+                    <Award size={16} aria-hidden="true" />
+                    Quiz
+                  </Button>
+                </Link>
+              </div>
+            </div>
 
-          <div className="divide-y divide-line rounded-lg border border-line bg-white">
-            {playerData.lessons.map((lesson, index) => {
-              const Icon = lessonIcons[lesson.type];
-              const isSelected = lesson.lessonId === selectedLesson.lessonId;
-              const isComplete = completedLessonIds.has(lesson.lessonId);
+            <div className="max-h-[34rem] overflow-auto">
+              {playerData.lessons.map((lesson, index) => {
+                const Icon = lessonIcons[lesson.type];
+                const isSelected = lesson.lessonId === selectedLesson.lessonId;
+                const isComplete = completedLessonIds.has(lesson.lessonId);
 
-              return (
-                <button
-                  key={lesson.lessonId}
-                  className={`flex w-full items-center gap-3 p-4 text-left transition ${
-                    isSelected ? "bg-brand-50" : "hover:bg-slate-50"
-                  }`}
-                  onClick={() => setSelectedLessonId(lesson.lessonId)}
-                  type="button"
-                >
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white text-brand-700 ring-1 ring-line">
-                    {isComplete ? <CheckCircle2 size={18} aria-hidden="true" /> : <Icon size={18} aria-hidden="true" />}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-ink">
-                      {index + 1}. {lesson.title}
-                    </p>
-                    <p className="mt-1 text-xs text-muted">
-                      {lesson.type} · {lesson.durationMinutes} min
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                return (
+                  <button
+                    key={lesson.lessonId}
+                    className={`flex w-full items-start gap-3 border-b border-line p-4 text-left transition last:border-b-0 ${
+                      isSelected ? "bg-brand-50" : "bg-white hover:bg-slate-50"
+                    }`}
+                    onClick={() => setSelectedLessonId(lesson.lessonId)}
+                    type="button"
+                  >
+                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${
+                      isComplete ? "bg-emerald-50 text-emerald-700" : "bg-slate-50 text-brand-700"
+                    }`}>
+                      {isComplete ? <CheckCircle2 size={19} aria-hidden="true" /> : <Icon size={19} aria-hidden="true" />}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-ink">
+                        {index + 1}. {lesson.title}
+                      </p>
+                      <p className="mt-1 text-xs font-semibold text-muted">
+                        {lesson.type} - {lesson.durationMinutes} min
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </Card>
         </aside>
 
         <div className="space-y-5">
           <Card className="overflow-hidden">
             <div className="flex aspect-video items-center justify-center bg-slate-950 text-white">
-              <div className="text-center">
-                <SelectedIcon className="mx-auto text-brand-100" size={48} aria-hidden="true" />
-                <h2 className="mt-4 text-2xl font-bold">{selectedLesson.title}</h2>
-                <p className="mt-2 text-sm text-slate-300">
-                  {selectedLesson.videoUrl ? "Video source ready" : "Video file will be connected from Google Drive later"}
-                </p>
-              </div>
+              {selectedLesson.videoUrl ? (
+                <iframe
+                  title={selectedLesson.title}
+                  src={selectedLesson.videoUrl}
+                  className="h-full w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <div className="max-w-lg px-6 text-center">
+                  <SelectedIcon className="mx-auto text-brand-100" size={56} aria-hidden="true" />
+                  <h2 className="mt-4 text-2xl font-bold">{selectedLesson.title}</h2>
+                  <p className="mt-2 text-sm leading-6 text-slate-300">
+                    Video or learning content will be connected from Google Drive by the course admin.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="p-5">
-              <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-                <div>
-                  <Badge>{selectedLesson.type}</Badge>
+              <div className="flex flex-col justify-between gap-4 xl:flex-row xl:items-start">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap gap-2">
+                    <Badge>{selectedLesson.type}</Badge>
+                    {isSelectedComplete ? <Badge tone="success">Completed</Badge> : null}
+                  </div>
+                  <h2 className="mt-3 text-2xl font-bold text-ink">{selectedLesson.title}</h2>
                   <p className="mt-3 text-sm leading-6 text-muted">
-                    {selectedLesson.notes || "Lesson notes and resources will be managed from the backend."}
+                    {selectedLesson.notes || "Lesson notes and supporting content will appear here when added by the admin."}
                   </p>
                 </div>
 
-                <Button onClick={handleMarkComplete} disabled={isSaving || completedLessonIds.has(selectedLesson.lessonId)}>
-                  {completedLessonIds.has(selectedLesson.lessonId)
-                    ? "Completed"
-                    : isSaving
-                      ? "Saving..."
-                      : "Mark complete"}
-                </Button>
+                <div className="flex shrink-0 flex-wrap gap-2">
+                  <Button variant="secondary" onClick={() => goToLesson(previousLesson)} disabled={!previousLesson}>
+                    <ChevronLeft size={16} aria-hidden="true" />
+                    Previous
+                  </Button>
+                  <Button onClick={handleMarkComplete} disabled={isSaving || isSelectedComplete}>
+                    {isSelectedComplete ? "Completed" : isSaving ? "Saving..." : "Mark complete"}
+                  </Button>
+                  <Button variant="secondary" onClick={() => goToLesson(nextLesson)} disabled={!nextLesson}>
+                    Next
+                    <ChevronRight size={16} aria-hidden="true" />
+                  </Button>
+                </div>
               </div>
 
               {notice ? (
@@ -284,80 +345,85 @@ export function CoursePlayerPage() {
             </div>
           </Card>
 
-          <Card className="p-5">
-            <div className="mb-4 flex items-center gap-2">
-              <LinkIcon className="text-brand-600" size={18} aria-hidden="true" />
-              <h2 className="text-lg font-bold text-ink">Lesson resources</h2>
-            </div>
+          <div className="grid gap-5 xl:grid-cols-2">
+            <ResourcePanel
+              icon={<LinkIcon size={18} aria-hidden="true" />}
+              title="Lesson resources"
+              emptyText="No lesson-specific resources have been added yet."
+              resources={selectedLessonResources}
+            />
+            <ResourcePanel
+              icon={<FileText size={18} aria-hidden="true" />}
+              title="Course resources"
+              emptyText="No course-level resources have been added yet."
+              resources={courseLevelResources}
+            />
+          </div>
 
-            {selectedLessonResources.length > 0 ? (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {selectedLessonResources.map((resource) => (
-                  <a
-                    key={resource.resourceId}
-                    className="rounded-lg border border-line bg-slate-50 p-4 transition hover:bg-white"
-                    href={resource.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <Badge tone={resourceTone[resource.type]}>{resource.type}</Badge>
-                        <p className="mt-3 text-sm font-bold text-ink">{resource.title}</p>
-                      </div>
-                      <ExternalLink className="shrink-0 text-slate-400" size={17} aria-hidden="true" />
-                    </div>
-                  </a>
-                ))}
+          <Card className="p-5">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-brand-50 text-brand-700">
+                <ShieldCheck size={19} aria-hidden="true" />
               </div>
-            ) : (
-              <p className="text-sm leading-6 text-muted">No lesson-specific resources have been added yet.</p>
-            )}
-          </Card>
-
-          <Card className="p-5">
-            <div className="mb-4 flex items-center gap-2">
-              <FileText className="text-brand-600" size={18} aria-hidden="true" />
-              <h2 className="text-lg font-bold text-ink">Course resources</h2>
-            </div>
-
-            {courseLevelResources.length > 0 ? (
-              <div className="grid gap-3 sm:grid-cols-2">
-                {courseLevelResources.map((resource) => (
-                  <a
-                    key={resource.resourceId}
-                    className="rounded-lg border border-line bg-slate-50 p-4 transition hover:bg-white"
-                    href={resource.url}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <Badge tone={resourceTone[resource.type]}>{resource.type}</Badge>
-                        <p className="mt-3 text-sm font-bold text-ink">{resource.title}</p>
-                      </div>
-                      <ExternalLink className="shrink-0 text-slate-400" size={17} aria-hidden="true" />
-                    </div>
-                  </a>
-                ))}
+              <div>
+                <h2 className="text-lg font-bold text-ink">Secure progress and resource access</h2>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  Lesson completion and course resources are requested with your session token. Apps Script verifies
+                  enrollment before saving progress or returning protected resource links.
+                </p>
               </div>
-            ) : (
-              <p className="text-sm leading-6 text-muted">No course-level resources have been added yet.</p>
-            )}
-          </Card>
-
-          <Card className="p-5">
-            <div className="mb-3 flex items-center gap-2">
-              <LockKeyhole className="text-brand-600" size={18} aria-hidden="true" />
-              <h2 className="text-lg font-bold text-ink">Secure progress and resource access</h2>
             </div>
-            <p className="text-sm leading-6 text-muted">
-              Lesson completion and course resources are requested with your session token. The backend verifies
-              enrollment before returning resource links.
-            </p>
           </Card>
         </div>
       </section>
     </main>
+  );
+}
+
+function ResourcePanel({
+  icon,
+  title,
+  emptyText,
+  resources,
+}: {
+  icon: JSX.Element;
+  title: string;
+  emptyText: string;
+  resources: AdminResource[];
+}) {
+  return (
+    <Card className="p-5">
+      <div className="mb-4 flex items-center gap-2">
+        <span className="text-brand-600">{icon}</span>
+        <h2 className="text-lg font-bold text-ink">{title}</h2>
+      </div>
+
+      {resources.length > 0 ? (
+        <div className="grid gap-3">
+          {resources.map((resource) => (
+            <a
+              key={resource.resourceId}
+              className="rounded-lg border border-line bg-slate-50 p-4 transition hover:bg-white"
+              href={resource.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <Badge tone={resourceTone[resource.type]}>{resource.type}</Badge>
+                  <p className="mt-3 text-sm font-bold text-ink">{resource.title}</p>
+                </div>
+                <ExternalLink className="shrink-0 text-slate-400" size={17} aria-hidden="true" />
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-dashed border-line bg-slate-50 p-5 text-center">
+          <ListChecks className="mx-auto text-slate-400" size={22} aria-hidden="true" />
+          <p className="mt-3 text-sm leading-6 text-muted">{emptyText}</p>
+        </div>
+      )}
+    </Card>
   );
 }

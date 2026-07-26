@@ -60,7 +60,9 @@ export function AdminCreateCoursePage() {
       <section className="border-b border-line bg-white">
         <div className="mx-auto max-w-4xl px-6 py-10">
           <Badge tone="brand">Admin courses</Badge>
+
           <h1 className="mt-5 text-4xl font-bold text-ink">Create course.</h1>
+
           <p className="mt-3 max-w-2xl leading-7 text-muted">
             Add a new course record. Lessons, resources, quizzes, and certificates remain managed by secure backend modules.
           </p>
@@ -73,6 +75,7 @@ export function AdminCreateCoursePage() {
             <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
               <BookOpen size={22} aria-hidden="true" />
             </div>
+
             <div>
               <h2 className="text-xl font-bold text-ink">Course metadata</h2>
               <p className="text-sm text-muted">Public visibility is controlled by course status.</p>
@@ -192,6 +195,7 @@ export function AdminCreateCoursePage() {
                 <CheckCircle2 size={16} aria-hidden="true" />
                 {isSaving ? "Creating..." : "Create course"}
               </Button>
+
               <Button type="button" variant="secondary" onClick={() => navigate("/admin/courses")}>
                 Cancel
               </Button>

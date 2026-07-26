@@ -1,6 +1,6 @@
-import { FormEvent, useState } from "react";
+import { type FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { CheckCircle2, UserPlus } from "lucide-react";
+import { CheckCircle2, ShieldCheck, UserPlus } from "lucide-react";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { Input } from "../components/ui/Input";
@@ -28,13 +28,14 @@ export function RegisterPage() {
     event.preventDefault();
     clearAuthError();
 
+    const cleanEmail = email.trim().toLowerCase();
     const nextErrors: RegisterErrors = {};
 
     if (fullName.trim().length < 2) {
       nextErrors.fullName = "Enter your full name.";
     }
 
-    if (!isValidEmail(email)) {
+    if (!isValidEmail(cleanEmail)) {
       nextErrors.email = "Enter a valid email address.";
     }
 
@@ -50,8 +51,8 @@ export function RegisterPage() {
 
     if (Object.keys(nextErrors).length === 0) {
       const success = await register({
-        fullName,
-        email,
+        fullName: fullName.trim(),
+        email: cleanEmail,
         password,
       });
 
@@ -64,10 +65,14 @@ export function RegisterPage() {
   return (
     <main className="bg-slate-50">
       <section className="mx-auto grid min-h-[calc(100vh-145px)] max-w-7xl gap-8 px-6 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-        <Card className="mx-auto w-full max-w-md p-6">
-          <h1 className="text-2xl font-bold text-ink">Create your account</h1>
+        <Card className="mx-auto w-full max-w-md rounded-[2rem] p-6 lg:p-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3 py-1 text-sm font-bold text-brand-700">
+            <UserPlus className="h-4 w-4" />
+            Student registration
+          </div>
+          <h1 className="mt-5 text-3xl font-bold tracking-tight text-ink">Create your account</h1>
           <p className="mt-2 text-sm leading-6 text-muted">
-            Registration creates a Student account after backend validation.
+            Registration creates a Student account after frontend checks and backend validation.
           </p>
 
           <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
@@ -117,7 +122,7 @@ export function RegisterPage() {
             />
 
             {authError ? (
-              <div className="rounded-lg border border-red-100 bg-red-50 p-3 text-sm font-semibold leading-6 text-red-700">
+              <div className="rounded-2xl border border-red-100 bg-red-50 p-3 text-sm font-semibold leading-6 text-red-700">
                 {authError}
               </div>
             ) : null}
@@ -136,16 +141,16 @@ export function RegisterPage() {
         </Card>
 
         <div>
-          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-lg bg-ink text-white">
-            <UserPlus size={24} aria-hidden="true" />
+          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-ink text-white">
+            <ShieldCheck size={24} aria-hidden="true" />
           </div>
 
-          <h2 className="max-w-xl text-4xl font-bold text-ink">
-            Start with secure student access.
+          <h2 className="max-w-xl text-4xl font-bold tracking-tight text-ink md:text-5xl">
+            Secure access from the first account.
           </h2>
 
           <p className="mt-4 max-w-xl leading-7 text-muted">
-            The backend validates every field, hashes passwords, creates sessions, and assigns safe default roles.
+            The browser helps validate form quality, but Apps Script owns final validation, password hashing, session creation, and safe default roles.
           </p>
 
           <div className="mt-8 space-y-3">
@@ -155,7 +160,7 @@ export function RegisterPage() {
               "Passwords are never stored in plain text",
               "Frontend data is never trusted by the backend",
             ].map((item) => (
-              <div key={item} className="flex gap-3 rounded-lg border border-line bg-white p-4">
+              <div key={item} className="flex gap-3 rounded-2xl border border-line bg-white p-4">
                 <CheckCircle2 className="mt-0.5 shrink-0 text-brand-600" size={18} aria-hidden="true" />
                 <p className="text-sm font-semibold leading-6 text-slate-700">{item}</p>
               </div>

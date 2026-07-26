@@ -1,15 +1,49 @@
+import { useState } from "react";
 import { ArrowLeft, ArrowRight, CheckCircle2, Download, LockKeyhole } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { CourseMeta } from "../components/course/CourseMeta";
 import { CourseSyllabus } from "../components/course/CourseSyllabus";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
+import { useAuth } from "../context/AuthContext";
 import { courses } from "../data/courses";
+import { enrollInCourse } from "../lib/enrolmentApi";
 
 export function CourseDetailsPage() {
   const { slug } = useParams();
+  const navigate = useNavigate();
+  const { isAuthenticated, sessionToken } = useAuth();
+  const [isEnrolling, setIsEnrolling] = useState(false);
+  const [enrolmentMessage, setEnrolmentMessage] = useState("");
+
   const course = courses.find((item) => item.slug === slug);
+
+  async function handleEnroll() {
+    if (!course) {
+      return;
+    }
+
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    setIsEnrolling(true);
+    setEnrolmentMessage("");
+
+    const response = await enrollInCourse(course.courseId, sessionToken);
+
+    setIsEnrolling(false);
+
+    if (!response.ok) {
+      setEnrolmentMessage(response.error.message);
+      return;
+    }
+
+    setEnrolmentMessage(response.data.alreadyEnrolled ? "You are already enrolled." : "Enrollment successful.");
+    navigate("/dashboard");
+  }
 
   if (!course) {
     return (
@@ -60,20 +94,29 @@ export function CourseDetailsPage() {
             <Card className="h-fit p-5">
               <div className="rounded-lg bg-slate-950 p-5 text-white">
                 <p className="text-sm font-bold text-brand-100">Course access</p>
-                <h2 className="mt-2 text-2xl font-bold">Enroll to continue</h2>
+                <h2 className="mt-2 text-2xl font-bold">{isAuthenticated ? "Ready to enroll" : "Login to continue"}</h2>
                 <p className="mt-3 text-sm leading-6 text-slate-300">
-                  Registration, session validation, enrolments, progress, and role checks will be connected to Apps Script.
+                  Enrollment is validated by Apps Script and stored securely in Google Sheets.
                 </p>
               </div>
 
-              <Button className="mt-5 w-full">
-                Enroll now
+              <Button className="mt-5 w-full" onClick={handleEnroll} disabled={isEnrolling}>
+                {isEnrolling ? "Enrolling..." : "Enroll now"}
                 <ArrowRight size={17} aria-hidden="true" />
               </Button>
-              <Button variant="secondary" className="mt-3 w-full">
-                <LockKeyhole size={17} aria-hidden="true" />
-                Login required
-              </Button>
+
+              {!isAuthenticated ? (
+                <Button variant="secondary" className="mt-3 w-full" onClick={() => navigate("/login")}>
+                  <LockKeyhole size={17} aria-hidden="true" />
+                  Login required
+                </Button>
+              ) : null}
+
+              {enrolmentMessage ? (
+                <div className="mt-4 rounded-lg border border-brand-100 bg-brand-50 p-3 text-sm font-semibold leading-6 text-brand-700">
+                  {enrolmentMessage}
+                </div>
+              ) : null}
 
               <div className="mt-5 border-t border-line pt-5">
                 <p className="text-sm font-bold text-ink">Trainer</p>

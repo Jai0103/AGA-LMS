@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jai0103.github.io/AGA-LMS/sitemap.xml

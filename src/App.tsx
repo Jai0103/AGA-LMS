@@ -3,6 +3,7 @@ import { AppShell } from "./components/layout/AppShell";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { CataloguePage } from "./pages/CataloguePage";
+import { CertificatesPage } from "./pages/CertificatesPage";
 import { CourseDetailsPage } from "./pages/CourseDetailsPage";
 import { CoursePlayerPage } from "./pages/CoursePlayerPage";
 import { LandingPage } from "./pages/LandingPage";
@@ -44,6 +45,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <QuizPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/certificates"
+              element={
+                <ProtectedRoute>
+                  <CertificatesPage />
                 </ProtectedRoute>
               }
             />

@@ -2,7 +2,9 @@ import { HashRouter, Route, Routes } from "react-router-dom";
 import { AppShell } from "./components/layout/AppShell";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import { AdminCoursesPage } from "./pages/AdminCoursesPage";
 import { AdminDashboardPage } from "./pages/AdminDashboardPage";
+import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { CataloguePage } from "./pages/CataloguePage";
 import { CertificatesPage } from "./pages/CertificatesPage";
 import { CourseDetailsPage } from "./pages/CourseDetailsPage";
@@ -62,6 +64,22 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["ADMIN"]}>
                   <AdminDashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminUsersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/courses"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminCoursesPage />
                 </ProtectedRoute>
               }
             />

@@ -1,203 +1,194 @@
-import { FormEvent, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { BookOpen, CheckCircle2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { BookOpen, GraduationCap, Star } from "lucide-react";
+import { Link } from "react-router-dom";
+import { AdminTable } from "../components/admin/AdminTable";
 import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
-import { Input } from "../components/ui/Input";
 import { useAuth } from "../context/AuthContext";
-import { adminCreateCourse } from "../lib/adminApi";
-import type { AdminCreateCoursePayload } from "../types/admin";
+import { adminListCourses, adminUpdateCourseStatus } from "../lib/adminApi";
+import type { PublicCourseFromApi } from "../lib/courseApi";
+import type { AdminCourseStatus } from "../types/admin";
 
-export function AdminCreateCoursePage() {
-  const navigate = useNavigate();
+const courseStatuses: AdminCourseStatus[] = ["Published", "Draft"];
+
+export function AdminCoursesPage() {
   const { sessionToken } = useAuth();
-  const [isSaving, setIsSaving] = useState(false);
+  const [courses, setCourses] = useState<PublicCourseFromApi[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [savingCourseId, setSavingCourseId] = useState("");
   const [notice, setNotice] = useState("");
 
-  const [form, setForm] = useState<AdminCreateCoursePayload>({
-    title: "",
-    subtitle: "",
-    category: "Operations",
-    level: "Beginner",
-    description: "",
-    trainerName: "AGA Faculty",
-    duration: "1h 00m",
-    durationMinutes: 60,
-    lessonsCount: 0,
-    status: "Draft",
-  });
+  useEffect(() => {
+    let isMounted = true;
 
-  function updateField<K extends keyof AdminCreateCoursePayload>(
-    field: K,
-    value: AdminCreateCoursePayload[K],
-  ) {
-    setForm((current) => ({
-      ...current,
-      [field]: value,
-    }));
-  }
+    adminListCourses(sessionToken).then((response) => {
+      if (!isMounted) {
+        return;
+      }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setIsSaving(true);
+      if (response.ok) {
+        setCourses(response.data.courses);
+      } else {
+        setNotice(response.error.message);
+      }
+
+      setIsLoading(false);
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [sessionToken]);
+
+  async function handleStatusChange(courseId: string, status: AdminCourseStatus) {
+    setSavingCourseId(courseId);
     setNotice("");
 
-    const response = await adminCreateCourse(form, sessionToken);
+    const response = await adminUpdateCourseStatus(courseId, status, sessionToken);
 
-    setIsSaving(false);
+    setSavingCourseId("");
 
     if (!response.ok) {
       setNotice(response.error.message);
       return;
     }
 
-    navigate("/admin/courses");
+    setCourses((current) =>
+      current.map((course) => (course.courseId === courseId ? response.data.course : course)),
+    );
+
+    setNotice("Course status updated.");
   }
+
+  const publishedCount = courses.filter((course) => course.status === "Published").length;
+  const totalLessons = courses.reduce((sum, course) => sum + course.lessonsCount, 0);
 
   return (
     <main className="bg-slate-50">
       <section className="border-b border-line bg-white">
-        <div className="mx-auto max-w-4xl px-6 py-10">
+        <div className="mx-auto max-w-7xl px-6 py-10">
           <Badge tone="brand">Admin courses</Badge>
-          <h1 className="mt-5 text-4xl font-bold text-ink">Create course.</h1>
+          <h1 className="mt-5 text-4xl font-bold text-ink">Course inventory.</h1>
           <p className="mt-3 max-w-2xl leading-7 text-muted">
-            Add a new course record. Lessons, resources, quizzes, and certificates remain managed by secure backend modules.
+            Review courses and control whether each course is published or hidden as a draft.
           </p>
+
+          <div className="mt-6">
+            <Link to="/admin/courses/new">
+              <Button variant="secondary">Create course</Button>
+            </Link>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <Card className="p-5">
+              <BookOpen className="text-brand-600" size={24} aria-hidden="true" />
+              <p className="mt-4 text-3xl font-bold text-ink">{courses.length}</p>
+              <p className="mt-1 text-sm font-semibold text-muted">Total courses</p>
+            </Card>
+
+            <Card className="p-5">
+              <GraduationCap className="text-brand-600" size={24} aria-hidden="true" />
+              <p className="mt-4 text-3xl font-bold text-ink">{publishedCount}</p>
+              <p className="mt-1 text-sm font-semibold text-muted">Published courses</p>
+            </Card>
+
+            <Card className="p-5">
+              <Star className="text-brand-600" size={24} aria-hidden="true" />
+              <p className="mt-4 text-3xl font-bold text-ink">{totalLessons}</p>
+              <p className="mt-1 text-sm font-semibold text-muted">Total lessons</p>
+            </Card>
+          </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-4xl px-6 py-10">
-        <Card className="p-6">
-          <div className="mb-6 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
-              <BookOpen size={22} aria-hidden="true" />
-            </div>
-            <div>
-              <h2 className="text-xl font-bold text-ink">Course metadata</h2>
-              <p className="text-sm text-muted">Public visibility is controlled by course status.</p>
-            </div>
+      <section className="mx-auto max-w-7xl px-6 py-10">
+        {notice ? (
+          <div className="mb-5 rounded-lg border border-brand-100 bg-brand-50 p-3 text-sm font-bold text-brand-700">
+            {notice}
           </div>
+        ) : null}
 
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            <Input
-              label="Title"
-              name="title"
-              value={form.title}
-              onChange={(event) => updateField("title", event.target.value)}
-              required
-            />
+        {isLoading ? (
+          <Card className="p-8 text-center">
+            <p className="text-sm font-bold text-muted">Loading courses...</p>
+          </Card>
+        ) : null}
 
-            <Input
-              label="Subtitle"
-              name="subtitle"
-              value={form.subtitle}
-              onChange={(event) => updateField("subtitle", event.target.value)}
-              required
-            />
+        {!isLoading ? (
+          <AdminTable title="All courses">
+            <table className="min-w-full text-left text-sm">
+              <thead className="bg-slate-50 text-xs uppercase text-muted">
+                <tr>
+                  <th className="px-5 py-3">Course</th>
+                  <th className="px-5 py-3">Category</th>
+                  <th className="px-5 py-3">Level</th>
+                  <th className="px-5 py-3">Lessons</th>
+                  <th className="px-5 py-3">Rating</th>
+                  <th className="px-5 py-3">Learners</th>
+                  <th className="px-5 py-3">Status</th>
+                </tr>
+              </thead>
 
-            <label className="block">
-              <span className="mb-2 block text-sm font-bold text-slate-700">Description</span>
-              <textarea
-                className="min-h-32 w-full rounded-lg border border-line bg-white px-3 py-3 text-sm text-ink outline-none transition focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
-                value={form.description}
-                onChange={(event) => updateField("description", event.target.value)}
-                required
-              />
-            </label>
+              <tbody className="divide-y divide-line">
+                {courses.map((course) => {
+                  const isSaving = savingCourseId === course.courseId;
 
-            <div className="grid gap-5 md:grid-cols-2">
-              <Input
-                label="Category"
-                name="category"
-                value={form.category}
-                onChange={(event) => updateField("category", event.target.value)}
-                required
-              />
+                  return (
+                    <tr key={course.courseId}>
+                      <td className="px-5 py-3">
+                        <p className="font-semibold text-ink">{course.title}</p>
+                        <p className="mt-1 text-xs text-muted">{course.trainerName}</p>
+                      </td>
 
-              <label className="block">
-                <span className="mb-2 block text-sm font-bold text-slate-700">Level</span>
-                <select
-                  className="h-11 w-full rounded-lg border border-line bg-white px-3 text-sm font-bold text-slate-700 outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
-                  value={form.level}
-                  onChange={(event) =>
-                    updateField("level", event.target.value as AdminCreateCoursePayload["level"])
-                  }
-                >
-                  <option value="Beginner">Beginner</option>
-                  <option value="Intermediate">Intermediate</option>
-                  <option value="Advanced">Advanced</option>
-                </select>
-              </label>
+                      <td className="px-5 py-3 text-muted">{course.category}</td>
 
-              <Input
-                label="Trainer name"
-                name="trainerName"
-                value={form.trainerName}
-                onChange={(event) => updateField("trainerName", event.target.value)}
-                required
-              />
+                      <td className="px-5 py-3">
+                        <Badge>{course.level}</Badge>
+                      </td>
 
-              <Input
-                label="Duration label"
-                name="duration"
-                value={form.duration}
-                onChange={(event) => updateField("duration", event.target.value)}
-                required
-              />
+                      <td className="px-5 py-3 text-muted">{course.lessonsCount}</td>
 
-              <Input
-                label="Duration minutes"
-                name="durationMinutes"
-                type="number"
-                min={0}
-                value={form.durationMinutes}
-                onChange={(event) => updateField("durationMinutes", Number(event.target.value))}
-                required
-              />
+                      <td className="px-5 py-3 text-muted">{course.rating.toFixed(1)}</td>
 
-              <Input
-                label="Lessons count"
-                name="lessonsCount"
-                type="number"
-                min={0}
-                value={form.lessonsCount}
-                onChange={(event) => updateField("lessonsCount", Number(event.target.value))}
-                required
-              />
+                      <td className="px-5 py-3 text-muted">{course.enrolledCount.toLocaleString()}</td>
 
-              <label className="block">
-                <span className="mb-2 block text-sm font-bold text-slate-700">Status</span>
-                <select
-                  className="h-11 w-full rounded-lg border border-line bg-white px-3 text-sm font-bold text-slate-700 outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
-                  value={form.status}
-                  onChange={(event) =>
-                    updateField("status", event.target.value as AdminCreateCoursePayload["status"])
-                  }
-                >
-                  <option value="Draft">Draft</option>
-                  <option value="Published">Published</option>
-                </select>
-              </label>
-            </div>
+                      <td className="px-5 py-3">
+                        <div className="flex items-center gap-2">
+                          <select
+                            className="h-10 rounded-lg border border-line bg-white px-3 text-sm font-bold text-slate-700 outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
+                            disabled={isSaving}
+                            onChange={(event) =>
+                              handleStatusChange(course.courseId, event.target.value as AdminCourseStatus)
+                            }
+                            value={course.status as AdminCourseStatus}
+                          >
+                            {courseStatuses.map((status) => (
+                              <option key={status} value={status}>
+                                {status}
+                              </option>
+                            ))}
+                          </select>
 
-            {notice ? (
-              <div className="rounded-lg border border-orange-100 bg-orange-50 p-3 text-sm font-bold text-orange-700">
-                {notice}
-              </div>
-            ) : null}
+                          <Badge tone={course.status === "Published" ? "success" : "warning"}>
+                            {course.status}
+                          </Badge>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </AdminTable>
+        ) : null}
 
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <Button type="submit" disabled={isSaving}>
-                <CheckCircle2 size={16} aria-hidden="true" />
-                {isSaving ? "Creating..." : "Create course"}
-              </Button>
-              <Button type="button" variant="secondary" onClick={() => navigate("/admin/courses")}>
-                Cancel
-              </Button>
-            </div>
-          </form>
-        </Card>
+        {!isLoading ? (
+          <div className="mt-5 rounded-lg border border-line bg-white p-4 text-sm leading-6 text-muted">
+            Published courses appear in the public catalogue. Draft courses are hidden from public course listing
+            and cannot be enrolled through the public flow.
+          </div>
+        ) : null}
       </section>
     </main>
   );

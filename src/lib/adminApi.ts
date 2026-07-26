@@ -1,10 +1,12 @@
 import { apiRequest } from "./apiClient";
 import type {
   AdminAssignableRole,
+  AdminCourseStatus,
   AdminCoursesData,
   AdminDetailedReportsData,
   AdminEnrolmentsData,
   AdminReportsData,
+  AdminUpdateCourseStatusData,
   AdminUpdateUserRoleData,
   AdminUpdateUserStatusData,
   AdminUsersData,
@@ -43,6 +45,14 @@ export function adminUpdateUserStatus(userId: string, status: AdminUserStatus, s
   return apiRequest<AdminUpdateUserStatusData, { userId: string; status: AdminUserStatus }>(
     "adminUpdateUserStatus",
     { userId, status },
+    sessionToken,
+  );
+}
+
+export function adminUpdateCourseStatus(courseId: string, status: AdminCourseStatus, sessionToken: string) {
+  return apiRequest<AdminUpdateCourseStatusData, { courseId: string; status: AdminCourseStatus }>(
+    "adminUpdateCourseStatus",
+    { courseId, status },
     sessionToken,
   );
 }

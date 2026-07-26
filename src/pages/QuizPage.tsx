@@ -5,7 +5,9 @@ import { Badge } from "../components/ui/Badge";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { useAuth } from "../context/AuthContext";
+import { checkCertificateEligibility, issueCertificate } from "../lib/certificateApi";
 import { getCourseQuiz, submitCourseQuiz } from "../lib/quizApi";
+import type { CertificateEligibilityData } from "../types/certificate";
 import type { GetCourseQuizData, QuizAnswer, SubmitCourseQuizData } from "../types/quiz";
 
 export function QuizPage() {
@@ -15,8 +17,10 @@ export function QuizPage() {
   const [quizData, setQuizData] = useState<GetCourseQuizData | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [result, setResult] = useState<SubmitCourseQuizData | null>(null);
+  const [eligibility, setEligibility] = useState<CertificateEligibilityData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isIssuing, setIsIssuing] = useState(false);
   const [notice, setNotice] = useState("");
 
   useEffect(() => {
@@ -49,6 +53,16 @@ export function QuizPage() {
     return quizData.questions.every((question) => Boolean(answers[question.questionId]));
   }, [answers, quizData]);
 
+  async function refreshEligibility() {
+    const response = await checkCertificateEligibility(courseId, sessionToken);
+
+    if (response.ok) {
+      setEligibility(response.data);
+    } else {
+      setNotice(response.error.message);
+    }
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -75,6 +89,27 @@ export function QuizPage() {
     }
 
     setResult(response.data);
+
+    if (response.data.passed) {
+      await refreshEligibility();
+    }
+  }
+
+  async function handleIssueCertificate() {
+    setIsIssuing(true);
+    setNotice("");
+
+    const response = await issueCertificate(courseId, sessionToken);
+
+    setIsIssuing(false);
+
+    if (!response.ok) {
+      setNotice(response.error.message);
+      return;
+    }
+
+    await refreshEligibility();
+    setNotice(response.data.alreadyIssued ? "Certificate already issued." : "Certificate issued successfully.");
   }
 
   if (isLoading) {
@@ -135,10 +170,34 @@ export function QuizPage() {
                 <p className="mt-2 text-muted">
                   Your score is {result.score}%. Passing score is {result.passingScore}%.
                 </p>
+
                 {result.passed ? (
-                  <div className="mt-4 inline-flex items-center gap-2 rounded-lg border border-emerald-100 bg-emerald-50 px-3 py-2 text-sm font-bold text-emerald-700">
-                    <Award size={17} aria-hidden="true" />
-                    Certificate eligibility will be added in the next step.
+                  <div className="mt-4 rounded-lg border border-emerald-100 bg-emerald-50 p-4">
+                    <div className="flex items-start gap-3">
+                      <Award className="mt-0.5 shrink-0 text-emerald-700" size={20} aria-hidden="true" />
+                      <div>
+                        <p className="text-sm font-bold text-emerald-800">
+                          {eligibility?.eligible || eligibility?.alreadyIssued
+                            ? "Certificate ready"
+                            : "Certificate not ready yet"}
+                        </p>
+                        <p className="mt-1 text-sm leading-6 text-emerald-700">
+                          {eligibility?.reason || "Checking certificate eligibility..."}
+                        </p>
+
+                        {eligibility?.alreadyIssued ? (
+                          <Link to="/certificates" className="mt-3 inline-flex">
+                            <Button>View certificate</Button>
+                          </Link>
+                        ) : null}
+
+                        {eligibility?.eligible && !eligibility.alreadyIssued ? (
+                          <Button className="mt-3" onClick={handleIssueCertificate} disabled={isIssuing}>
+                            {isIssuing ? "Issuing..." : "Issue certificate"}
+                          </Button>
+                        ) : null}
+                      </div>
+                    </div>
                   </div>
                 ) : null}
               </div>

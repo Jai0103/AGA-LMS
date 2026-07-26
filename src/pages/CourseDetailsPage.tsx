@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import {
   ArrowLeft,
   ArrowRight,
+  Award,
   BadgeCheck,
   BookOpenCheck,
   CheckCircle2,
@@ -11,6 +12,7 @@ import {
   LockKeyhole,
   PlayCircle,
   ShieldCheck,
+  Sparkles,
   Star,
   Users,
 } from "lucide-react";
@@ -164,13 +166,13 @@ export function CourseDetailsPage() {
       <main className="bg-slate-50">
         <div className="mx-auto max-w-7xl px-6 py-10">
           <div className="h-5 w-40 rounded-full bg-slate-100" />
-          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
+          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_380px]">
             <div className="space-y-4">
               <div className="h-12 max-w-3xl animate-pulse rounded-2xl bg-slate-100" />
               <div className="h-6 max-w-2xl animate-pulse rounded-2xl bg-slate-100" />
               <div className="h-28 max-w-3xl animate-pulse rounded-2xl bg-slate-100" />
             </div>
-            <div className="h-80 animate-pulse rounded-[1.5rem] bg-slate-100" />
+            <div className="h-96 animate-pulse rounded-[1.5rem] bg-slate-100" />
           </div>
         </div>
       </main>
@@ -196,6 +198,8 @@ export function CourseDetailsPage() {
 
   const { course, lessons, outcomes, audience, resources } = details;
   const previewLessons = lessons.filter((lesson) => lesson.isPreview).length;
+  const quizLessons = lessons.filter((lesson) => lesson.type === "Quiz").length;
+  const totalLessonMinutes = lessons.reduce((sum, lesson) => sum + safeNumber(lesson.durationMinutes), 0);
 
   return (
     <main className="bg-slate-50">
@@ -212,7 +216,7 @@ export function CourseDetailsPage() {
             </div>
           ) : null}
 
-          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_380px]">
+          <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_390px]">
             <div>
               <div className="mb-5 flex flex-wrap gap-2">
                 <Badge tone="brand">{course.category}</Badge>
@@ -220,7 +224,7 @@ export function CourseDetailsPage() {
                 <Badge tone={course.status === "Published" ? "success" : "warning"}>{course.status}</Badge>
               </div>
 
-              <h1 className="max-w-4xl text-4xl font-bold tracking-tight text-ink lg:text-5xl">{course.title}</h1>
+              <h1 className="max-w-4xl text-4xl font-bold tracking-tight text-ink lg:text-6xl">{course.title}</h1>
               <p className="mt-4 max-w-3xl text-xl font-semibold leading-8 text-slate-700">{course.subtitle}</p>
               <p className="mt-5 max-w-3xl leading-7 text-muted">{course.description}</p>
 
@@ -244,7 +248,7 @@ export function CourseDetailsPage() {
                   </div>
                 </div>
                 <p className="mt-4 text-sm leading-6 text-slate-300">
-                  Enrollment is validated by Apps Script and stored securely in Google Sheets.
+                  Enrollment, progress, quiz attempts, and certificate eligibility are validated by Apps Script.
                 </p>
               </div>
 
@@ -270,6 +274,7 @@ export function CourseDetailsPage() {
                 <div className="mt-5 grid gap-3 border-t border-line pt-5">
                   <SideFact label="Trainer" value={course.trainerName} />
                   <SideFact label="Preview lessons" value={`${previewLessons}`} />
+                  <SideFact label="Quiz lessons" value={`${quizLessons}`} />
                   <SideFact label="Certificate" value="Available after completion" />
                 </div>
               </div>
@@ -295,16 +300,30 @@ export function CourseDetailsPage() {
             </div>
           </Card>
 
-          <div>
-            <h2 className="mb-4 text-2xl font-bold text-ink">Course syllabus</h2>
-            {lessons.length > 0 ? (
-              <CourseSyllabus lessons={lessons} />
-            ) : (
-              <Card className="rounded-[1.5rem] p-6">
-                <p className="text-sm font-bold text-muted">No lessons have been added yet.</p>
-              </Card>
-            )}
-          </div>
+          <Card className="rounded-[1.5rem] p-6">
+            <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+              <div>
+                <div className="flex items-center gap-2">
+                  <PlayCircle className="h-5 w-5 text-brand-600" />
+                  <h2 className="text-2xl font-bold text-ink">Course syllabus</h2>
+                </div>
+                <p className="mt-2 text-sm leading-6 text-muted">
+                  {lessons.length} lesson{lessons.length === 1 ? "" : "s"} - {formatDuration(totalLessonMinutes)} of structured learning.
+                </p>
+              </div>
+              <Badge tone="success">{previewLessons} preview</Badge>
+            </div>
+
+            <div className="mt-5">
+              {lessons.length > 0 ? (
+                <CourseSyllabus lessons={lessons} />
+              ) : (
+                <div className="rounded-2xl border border-dashed border-line bg-slate-50 p-6">
+                  <p className="text-sm font-bold text-muted">No lessons have been added yet.</p>
+                </div>
+              )}
+            </div>
+          </Card>
         </div>
 
         <aside className="space-y-5">
@@ -328,10 +347,18 @@ export function CourseDetailsPage() {
             <p className="mt-3 text-sm leading-6 text-muted">
               Lesson progress, quiz attempts, enrolment state, and certificate eligibility are checked by the backend.
             </p>
+            <div className="mt-4 grid gap-2">
+              <CompletionItem icon={<BookOpenCheck className="h-4 w-4" />} text="Complete lessons" />
+              <CompletionItem icon={<CheckCircle2 className="h-4 w-4" />} text="Pass quiz when available" />
+              <CompletionItem icon={<Award className="h-4 w-4" />} text="Issue certificate after eligibility" />
+            </div>
           </Card>
 
           <Card className="rounded-[1.5rem] p-5">
-            <h2 className="text-lg font-bold text-ink">Resources</h2>
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-brand-600" />
+              <h2 className="text-lg font-bold text-ink">Resources</h2>
+            </div>
             <div className="mt-4 space-y-3">
               {resources.length > 0 ? (
                 resources.map((resource) => (
@@ -376,4 +403,36 @@ function SideFact({ label, value }: { label: string; value: string }) {
       <p className="text-right text-sm font-bold text-ink">{value}</p>
     </div>
   );
+}
+
+function CompletionItem({ icon, text }: { icon: ReactNode; text: string }) {
+  return (
+    <div className="flex items-center gap-2 rounded-2xl border border-line bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700">
+      <span className="text-brand-700">{icon}</span>
+      {text}
+    </div>
+  );
+}
+
+function safeNumber(value: number) {
+  return Number.isFinite(value) ? value : 0;
+}
+
+function formatDuration(minutes: number) {
+  if (minutes <= 0) {
+    return "0 min";
+  }
+
+  if (minutes < 60) {
+    return `${minutes} min`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+
+  if (remainingMinutes === 0) {
+    return `${hours}h`;
+  }
+
+  return `${hours}h ${remainingMinutes}m`;
 }

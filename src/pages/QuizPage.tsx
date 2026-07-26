@@ -73,7 +73,9 @@ export function QuizPage() {
   const totalQuestions = quizData?.questions.length ?? 0;
   const answerProgress = totalQuestions > 0 ? Math.round((answeredCount / totalQuestions) * 100) : 0;
   const totalPoints = quizData?.questions.reduce((sum, question) => sum + safeNumber(question.points), 0) ?? 0;
-  const allAnswered = Boolean(quizData) && quizData.questions.every((question) => Boolean(answers[question.questionId]));
+  const allAnswered = quizData
+    ? quizData.questions.every((question) => Boolean(answers[question.questionId]))
+    : false;
 
   async function refreshEligibility() {
     const response = await checkCertificateEligibility(courseId, sessionToken);

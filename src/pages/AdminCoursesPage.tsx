@@ -170,6 +170,12 @@ export function AdminCoursesPage() {
                           >
                             Manage resources
                           </Link>
+                          <Link
+                            to={`/admin/courses/${course.courseId}/quiz`}
+                            className="text-sm font-bold text-brand-700 hover:text-brand-600"
+                          >
+                            Manage quiz
+                          </Link>
                         </div>
                       </td>
 

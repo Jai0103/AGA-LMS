@@ -156,6 +156,12 @@ export function HelpCenterPage() {
                   Contact support
                 </Button>
               </a>
+              <Link to="/support">
+                <Button variant="secondary">
+                  <LifeBuoy className="h-4 w-4" />
+                  Open support ticket
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -179,7 +185,8 @@ export function HelpCenterPage() {
         <QuickLink icon={<KeyRound className="h-5 w-5" />} label="Reset password" to="/forgot-password" />
       </section>
 
-      <section className="grid gap-4 md:grid-cols-2">
+      <section className="grid gap-4 md:grid-cols-3">
+        <QuickLink icon={<LifeBuoy className="h-5 w-5" />} label="Open support ticket" to="/support" />
         <QuickLink icon={<FileText className="h-5 w-5" />} label="Terms of use" to="/terms" />
         <QuickLink icon={<ShieldCheck className="h-5 w-5" />} label="Privacy policy" to="/privacy" />
       </section>

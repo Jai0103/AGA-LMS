@@ -276,6 +276,9 @@ function AccountDropdown({
       <DropdownLink to="/verify-certificate" icon={<SearchCheck className="h-4 w-4" />} onClick={onNavigate}>
         Verify Certificate
       </DropdownLink>
+      <DropdownLink to="/certificate-policy" icon={<Award className="h-4 w-4" />} onClick={onNavigate}>
+        Certificate Policy
+      </DropdownLink>
       <a
         href={`mailto:${supportEmail}`}
         className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"

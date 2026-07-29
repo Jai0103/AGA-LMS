@@ -232,7 +232,16 @@ export function AppShell() {
       <footer className="border-t border-brand-100 bg-white/90">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-sm font-semibold text-muted sm:px-6 lg:px-8">
           <p>{settings.platformName} - React, TypeScript, Vite, Tailwind CSS</p>
-          <p>Support: {settings.supportEmail} - API connected through Apps Script - Build 2026</p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+            <p>Support: {settings.supportEmail} - API connected through Apps Script - Build 2026</p>
+            <span className="hidden text-slate-300 sm:inline">|</span>
+            <Link to="/terms" className="font-black text-brand-700 transition hover:text-accent-600">
+              Terms
+            </Link>
+            <Link to="/privacy" className="font-black text-brand-700 transition hover:text-accent-600">
+              Privacy
+            </Link>
+          </div>
         </div>
       </footer>
     </div>

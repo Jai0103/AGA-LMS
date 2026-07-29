@@ -3,6 +3,7 @@ import {
   Award,
   BookOpen,
   CheckCircle2,
+  FileText,
   HelpCircle,
   KeyRound,
   LifeBuoy,
@@ -176,6 +177,11 @@ export function HelpCenterPage() {
         <QuickLink icon={<Search className="h-5 w-5" />} label="Verify certificate" to="/verify-certificate" />
         <QuickLink icon={<Award className="h-5 w-5" />} label="Certificate policy" to="/certificate-policy" />
         <QuickLink icon={<KeyRound className="h-5 w-5" />} label="Reset password" to="/forgot-password" />
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-2">
+        <QuickLink icon={<FileText className="h-5 w-5" />} label="Terms of use" to="/terms" />
+        <QuickLink icon={<ShieldCheck className="h-5 w-5" />} label="Privacy policy" to="/privacy" />
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">

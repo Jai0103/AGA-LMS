@@ -11,6 +11,7 @@ const pageTitles: Record<string, string> = {
   "/dashboard": "Student Dashboard",
   "/profile": "Profile Settings",
   "/support": "Support",
+  "/updates": "Updates",
   "/certificates": "Certificates",
   "/certificate-policy": "Certificate Policy",
   "/verify-certificate": "Certificate Verification",
@@ -24,6 +25,7 @@ const pageTitles: Record<string, string> = {
   "/admin/reports": "Admin Reports",
   "/admin/settings": "Platform Settings",
   "/admin/support": "Support Inbox",
+  "/admin/announcements": "Admin Announcements",
 };
 
 export function DocumentHead() {

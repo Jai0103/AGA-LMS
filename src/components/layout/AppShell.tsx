@@ -175,6 +175,9 @@ export function AppShell() {
                     <MobileLink to="/support" onClick={() => setIsMobileOpen(false)}>
                       Support
                     </MobileLink>
+                    <MobileLink to="/updates" onClick={() => setIsMobileOpen(false)}>
+                      Updates
+                    </MobileLink>
                     {isAdmin ? (
                       <>
                         <MobileLink to="/admin" onClick={() => setIsMobileOpen(false)}>
@@ -185,6 +188,9 @@ export function AppShell() {
                         </MobileLink>
                         <MobileLink to="/admin/support" onClick={() => setIsMobileOpen(false)}>
                           Support Inbox
+                        </MobileLink>
+                        <MobileLink to="/admin/announcements" onClick={() => setIsMobileOpen(false)}>
+                          Announcements
                         </MobileLink>
                       </>
                     ) : null}
@@ -280,6 +286,9 @@ function AccountDropdown({
       <DropdownLink to="/support" icon={<HelpCircle className="h-4 w-4" />} onClick={onNavigate}>
         Support
       </DropdownLink>
+      <DropdownLink to="/updates" icon={<Megaphone className="h-4 w-4" />} onClick={onNavigate}>
+        Updates
+      </DropdownLink>
       {isAdmin ? (
         <DropdownLink to="/admin" icon={<ShieldCheck className="h-4 w-4" />} onClick={onNavigate}>
           Admin Dashboard
@@ -299,6 +308,11 @@ function AccountDropdown({
       {isAdmin ? (
         <DropdownLink to="/admin/support" icon={<Inbox className="h-4 w-4" />} onClick={onNavigate}>
           Support Inbox
+        </DropdownLink>
+      ) : null}
+      {isAdmin ? (
+        <DropdownLink to="/admin/announcements" icon={<Megaphone className="h-4 w-4" />} onClick={onNavigate}>
+          Announcements
         </DropdownLink>
       ) : null}
       <DropdownLink to="/help" icon={<HelpCircle className="h-4 w-4" />} onClick={onNavigate}>

@@ -1,220 +1,394 @@
-import { HashRouter, Route, Routes } from "react-router-dom";
-import { AppShell } from "./components/layout/AppShell";
-import { ProtectedRoute } from "./components/layout/ProtectedRoute";
-import { AuthProvider } from "./context/AuthContext";
-import { PlatformSettingsProvider } from "./context/PlatformSettingsContext";
-import { AdminCoursesPage } from "./pages/AdminCoursesPage";
-import { AdminCreateCoursePage } from "./pages/AdminCreateCoursePage";
-import { AdminDashboardPage } from "./pages/AdminDashboardPage";
-import { AdminEnrolmentsPage } from "./pages/AdminEnrolmentsPage";
-import { AdminLessonsPage } from "./pages/AdminLessonsPage";
-import { AdminQuizPage } from "./pages/AdminQuizPage";
-import { AdminReportsPage } from "./pages/AdminReportsPage";
-import { AdminResourcesPage } from "./pages/AdminResourcesPage";
-import { AdminSettingsPage } from "./pages/AdminSettingsPage";
-import { AdminSupportPage } from "./pages/AdminSupportPage";
-import { AdminUsersPage } from "./pages/AdminUsersPage";
-import { CataloguePage } from "./pages/CataloguePage";
-import { CertificateVerificationPage } from "./pages/CertificateVerificationPage";
-import { CertificatePolicyPage } from "./pages/CertificatePolicyPage";
-import { CertificatesPage } from "./pages/CertificatesPage";
-import { CourseDetailsPage } from "./pages/CourseDetailsPage";
-import { CoursePlayerPage } from "./pages/CoursePlayerPage";
-import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
-import { HelpCenterPage } from "./pages/HelpCenterPage";
-import { LandingPage } from "./pages/LandingPage";
-import { LoginPage } from "./pages/LoginPage";
-import { NotFoundPage } from "./pages/NotFoundPage";
-import { ProfilePage } from "./pages/ProfilePage";
-import { PrivacyPage } from "./pages/PrivacyPage";
-import { QuizPage } from "./pages/QuizPage";
-import { RegisterPage } from "./pages/RegisterPage";
-import { ResetPasswordPage } from "./pages/ResetPasswordPage";
-import { StudentDashboardPage } from "./pages/StudentDashboardPage";
-import { SupportPage } from "./pages/SupportPage";
-import { TermsPage } from "./pages/TermsPage";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import {
+  Award,
+  ChevronDown,
+  HelpCircle,
+  Inbox,
+  LayoutDashboard,
+  LogOut,
+  Megaphone,
+  Menu,
+  SearchCheck,
+  Settings,
+  ShieldCheck,
+  UserRound,
+  X,
+} from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { usePlatformSettings } from "../../context/PlatformSettingsContext";
+import { DocumentHead } from "./DocumentHead";
 
-function App() {
+const publicLinks = [
+  { to: "/courses", label: "Courses" },
+  { to: "/verify-certificate", label: "Verify Certificate" },
+];
+
+export function AppShell() {
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const { settings } = usePlatformSettings();
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement | null>(null);
+  const isSignedIn = Boolean(user);
+  const isAdmin = user?.role === "ADMIN";
+
+  useEffect(() => {
+    function handlePointerDown(event: MouseEvent) {
+      if (!accountMenuRef.current?.contains(event.target as Node)) {
+        setIsAccountOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => document.removeEventListener("mousedown", handlePointerDown);
+  }, []);
+
+  async function handleLogout() {
+    setIsAccountOpen(false);
+    setIsMobileOpen(false);
+    await logout();
+    navigate("/");
+  }
+
   return (
-    <AuthProvider>
-      <PlatformSettingsProvider>
-        <HashRouter>
-          <Routes>
-            <Route element={<AppShell />}>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/courses" element={<CataloguePage />} />
-            <Route path="/courses/:slug" element={<CourseDetailsPage />} />
-            <Route path="/certificate-policy" element={<CertificatePolicyPage />} />
-            <Route path="/verify-certificate" element={<CertificateVerificationPage />} />
-            <Route path="/verify-certificate/:certificateCode" element={<CertificateVerificationPage />} />
-            <Route path="/help" element={<HelpCenterPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/privacy" element={<PrivacyPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-            <Route path="/register" element={<RegisterPage />} />
+    <div className="min-h-screen text-ink">
+      <DocumentHead />
+      <header className="sticky top-0 z-40 border-b border-brand-100 bg-white/90 shadow-sm shadow-brand-500/5 backdrop-blur">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex min-h-20 items-center justify-between gap-4">
+            <Link to="/" className="flex items-center gap-3" onClick={() => setIsMobileOpen(false)}>
+              <div className="flex h-14 w-[9rem] items-center justify-center overflow-hidden sm:w-[12rem]">
+                <img
+                  src={`${import.meta.env.BASE_URL}aga-logo.png`}
+                  alt={settings.platformName}
+                  className="h-full w-full object-contain"
+                  width="192"
+                  height="56"
+                />
+              </div>
+              <div className="hidden sm:block">
+                <p className="max-w-[13rem] truncate text-lg font-black tracking-tight sm:max-w-[18rem]">
+                  {settings.platformName}
+                </p>
+                <p className="text-xs font-bold text-brand-600">Premium learning platform</p>
+              </div>
+            </Link>
 
-            <Route
-              path="/dashboard"
-              element={
-                <ProtectedRoute>
-                  <StudentDashboardPage />
-                </ProtectedRoute>
-              }
-            />
+            <nav className="hidden items-center gap-1 lg:flex">
+              {publicLinks.map((link) => (
+                <HeaderLink key={link.to} to={link.to}>
+                  {link.label}
+                </HeaderLink>
+              ))}
 
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <ProfilePage />
-                </ProtectedRoute>
-              }
-            />
+              <a href="/AGA-LMS/#/#platform" className="rounded-full px-4 py-2 text-sm font-bold text-brand-700 transition hover:bg-brand-50">
+                Platform
+              </a>
+              <a href="/AGA-LMS/#/#security" className="rounded-full px-4 py-2 text-sm font-bold text-brand-700 transition hover:bg-brand-50">
+                Security
+              </a>
 
-            <Route
-              path="/support"
-              element={
-                <ProtectedRoute>
-                  <SupportPage />
-                </ProtectedRoute>
-              }
-            />
+              {isAdmin ? (
+                <HeaderLink to="/admin">
+                  <span className="inline-flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4" />
+                    Admin
+                  </span>
+                </HeaderLink>
+              ) : null}
+            </nav>
 
-            <Route
-              path="/learn/:courseId"
-              element={
-                <ProtectedRoute>
-                  <CoursePlayerPage />
-                </ProtectedRoute>
-              }
-            />
+            <div className="hidden items-center gap-3 lg:flex">
+              {isSignedIn ? (
+                <div ref={accountMenuRef} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setIsAccountOpen((value) => !value)}
+                    className="inline-flex items-center gap-3 rounded-full border border-brand-100 bg-white py-1.5 pl-2 pr-3 text-sm font-bold text-ink shadow-sm transition hover:border-brand-500 hover:bg-brand-50"
+                    aria-expanded={isAccountOpen}
+                  >
+                    <UserAvatar name={user?.fullName ?? "AGA"} />
+                    <span className="max-w-[10rem] truncate">{user?.fullName}</span>
+                    <ChevronDown className={`h-4 w-4 text-slate-500 transition ${isAccountOpen ? "rotate-180" : ""}`} />
+                  </button>
 
-            <Route
-              path="/learn/:courseId/quiz"
-              element={
-                <ProtectedRoute>
-                  <QuizPage />
-                </ProtectedRoute>
-              }
-            />
+                  {isAccountOpen ? (
+                    <AccountDropdown
+                      isAdmin={isAdmin}
+                      platformName={settings.platformName}
+                      onLogout={handleLogout}
+                      onNavigate={() => setIsAccountOpen(false)}
+                    />
+                  ) : null}
+                </div>
+              ) : (
+                <>
+                  <HeaderLink to="/login">Log in</HeaderLink>
+                  <Link
+                    to="/register"
+                    className="inline-flex items-center justify-center rounded-full bg-accent-500 px-5 py-2.5 text-sm font-bold text-white shadow-sm shadow-accent-500/20 transition hover:bg-accent-600"
+                  >
+                    Get started
+                  </Link>
+                </>
+              )}
+            </div>
 
-            <Route
-              path="/certificates"
-              element={
-                <ProtectedRoute>
-                  <CertificatesPage />
-                </ProtectedRoute>
-              }
-            />
+            <button
+              type="button"
+              onClick={() => setIsMobileOpen((value) => !value)}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-brand-100 bg-white text-brand-700 lg:hidden"
+              aria-label="Open navigation"
+            >
+              {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+          </div>
 
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute allowedRoles={["ADMIN"]}>
-                  <AdminDashboardPage />
-                </ProtectedRoute>
-              }
-            />
+          {isMobileOpen ? (
+            <div className="border-t border-slate-200 py-4 lg:hidden">
+              <div className="grid gap-2">
+                {publicLinks.map((link) => (
+                  <MobileLink key={link.to} to={link.to} onClick={() => setIsMobileOpen(false)}>
+                    {link.label}
+                  </MobileLink>
+                ))}
+                <a href="/AGA-LMS/#/#platform" className="rounded-2xl px-4 py-3 text-sm font-bold text-brand-700 hover:bg-brand-50">
+                  Platform
+                </a>
+                <a href="/AGA-LMS/#/#security" className="rounded-2xl px-4 py-3 text-sm font-bold text-brand-700 hover:bg-brand-50">
+                  Security
+                </a>
 
-            <Route
-              path="/admin/users"
-              element={
-                <ProtectedRoute allowedRoles={["ADMIN"]}>
-                  <AdminUsersPage />
-                </ProtectedRoute>
-              }
-            />
+                {isSignedIn ? (
+                  <>
+                    <MobileLink to="/dashboard" onClick={() => setIsMobileOpen(false)}>
+                      My Learning
+                    </MobileLink>
+                    <MobileLink to="/certificates" onClick={() => setIsMobileOpen(false)}>
+                      Certificates
+                    </MobileLink>
+                    <MobileLink to="/profile" onClick={() => setIsMobileOpen(false)}>
+                      Settings
+                    </MobileLink>
+                    <MobileLink to="/support" onClick={() => setIsMobileOpen(false)}>
+                      Support
+                    </MobileLink>
+                    {isAdmin ? (
+                      <>
+                        <MobileLink to="/admin" onClick={() => setIsMobileOpen(false)}>
+                          Admin
+                        </MobileLink>
+                        <MobileLink to="/admin/settings" onClick={() => setIsMobileOpen(false)}>
+                          Platform Settings
+                        </MobileLink>
+                        <MobileLink to="/admin/support" onClick={() => setIsMobileOpen(false)}>
+                          Support Inbox
+                        </MobileLink>
+                      </>
+                    ) : null}
+                    <Link
+                      to="/help"
+                      onClick={() => setIsMobileOpen(false)}
+                      className="rounded-2xl px-4 py-3 text-sm font-bold text-brand-700 hover:bg-brand-50"
+                    >
+                      Help Center
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="rounded-2xl px-4 py-3 text-left text-sm font-bold text-brand-700 hover:bg-brand-50"
+                    >
+                      Log Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <MobileLink to="/login" onClick={() => setIsMobileOpen(false)}>
+                      Log in
+                    </MobileLink>
+                    <Link
+                      to="/register"
+                      onClick={() => setIsMobileOpen(false)}
+                      className="rounded-2xl bg-accent-500 px-4 py-3 text-center text-sm font-bold text-white"
+                    >
+                      Get started
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          ) : null}
+        </div>
 
-            <Route
-              path="/admin/courses/new"
-              element={
-                <ProtectedRoute allowedRoles={["ADMIN"]}>
-                  <AdminCreateCoursePage />
-                </ProtectedRoute>
-              }
-            />
+        {settings.maintenanceEnabled ? (
+          <div className="border-t border-amber-200 bg-amber-50">
+            <div className="mx-auto flex max-w-7xl items-start gap-3 px-4 py-3 text-sm font-bold text-amber-900 sm:px-6 lg:px-8">
+              <Megaphone className="mt-0.5 h-4 w-4 shrink-0" />
+              <p>{settings.maintenanceNotice}</p>
+            </div>
+          </div>
+        ) : null}
+      </header>
 
-            <Route
-              path="/admin/courses/:courseId/lessons"
-              element={
-                <ProtectedRoute allowedRoles={["ADMIN"]}>
-                  <AdminLessonsPage />
-                </ProtectedRoute>
-              }
-            />
+      <main className="mx-auto min-h-[calc(100vh-11rem)] max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <Outlet />
+      </main>
 
-            <Route
-              path="/admin/courses/:courseId/resources"
-              element={
-                <ProtectedRoute allowedRoles={["ADMIN"]}>
-                  <AdminResourcesPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/admin/courses/:courseId/quiz"
-              element={
-                <ProtectedRoute allowedRoles={["ADMIN"]}>
-                  <AdminQuizPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/admin/courses"
-              element={
-                <ProtectedRoute allowedRoles={["ADMIN"]}>
-                  <AdminCoursesPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/admin/enrolments"
-              element={
-                <ProtectedRoute allowedRoles={["ADMIN"]}>
-                  <AdminEnrolmentsPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/admin/reports"
-              element={
-                <ProtectedRoute allowedRoles={["ADMIN"]}>
-                  <AdminReportsPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/admin/settings"
-              element={
-                <ProtectedRoute allowedRoles={["ADMIN"]}>
-                  <AdminSettingsPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/admin/support"
-              element={
-                <ProtectedRoute allowedRoles={["ADMIN"]}>
-                  <AdminSupportPage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route path="*" element={<NotFoundPage />} />
-            </Route>
-          </Routes>
-        </HashRouter>
-      </PlatformSettingsProvider>
-    </AuthProvider>
+      <footer className="border-t border-brand-100 bg-white/90">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-6 text-sm font-semibold text-muted sm:px-6 lg:px-8">
+          <p>{settings.platformName} - React, TypeScript, Vite, Tailwind CSS</p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+            <p>Support: {settings.supportEmail} - API connected through Apps Script - Build 2026</p>
+            <span className="hidden text-slate-300 sm:inline">|</span>
+            <Link to="/terms" className="font-black text-brand-700 transition hover:text-accent-600">
+              Terms
+            </Link>
+            <Link to="/privacy" className="font-black text-brand-700 transition hover:text-accent-600">
+              Privacy
+            </Link>
+          </div>
+        </div>
+      </footer>
+    </div>
   );
 }
 
-export default App;
+function AccountDropdown({
+  isAdmin,
+  platformName,
+  onLogout,
+  onNavigate,
+}: {
+  isAdmin: boolean;
+  platformName: string;
+  onLogout: () => void;
+  onNavigate: () => void;
+}) {
+  return (
+    <div className="absolute right-0 top-14 w-72 overflow-hidden rounded-3xl border border-slate-200 bg-white py-2 shadow-2xl shadow-slate-900/15">
+      <DropdownLink to="/dashboard" icon={<LayoutDashboard className="h-4 w-4" />} onClick={onNavigate}>
+        My Learning
+      </DropdownLink>
+      <DropdownLink to="/certificates" icon={<Award className="h-4 w-4" />} onClick={onNavigate}>
+        Certificates
+      </DropdownLink>
+      <DropdownLink to="/profile" icon={<Settings className="h-4 w-4" />} onClick={onNavigate}>
+        Settings
+      </DropdownLink>
+      <DropdownLink to="/support" icon={<HelpCircle className="h-4 w-4" />} onClick={onNavigate}>
+        Support
+      </DropdownLink>
+      {isAdmin ? (
+        <DropdownLink to="/admin" icon={<ShieldCheck className="h-4 w-4" />} onClick={onNavigate}>
+          Admin Dashboard
+        </DropdownLink>
+      ) : null}
+      {isAdmin ? (
+        <DropdownLink to="/admin/settings" icon={<Settings className="h-4 w-4" />} onClick={onNavigate}>
+          Platform Settings
+        </DropdownLink>
+      ) : null}
+      <DropdownLink to="/verify-certificate" icon={<SearchCheck className="h-4 w-4" />} onClick={onNavigate}>
+        Verify Certificate
+      </DropdownLink>
+      <DropdownLink to="/certificate-policy" icon={<Award className="h-4 w-4" />} onClick={onNavigate}>
+        Certificate Policy
+      </DropdownLink>
+      {isAdmin ? (
+        <DropdownLink to="/admin/support" icon={<Inbox className="h-4 w-4" />} onClick={onNavigate}>
+          Support Inbox
+        </DropdownLink>
+      ) : null}
+      <DropdownLink to="/help" icon={<HelpCircle className="h-4 w-4" />} onClick={onNavigate}>
+        Help Center
+      </DropdownLink>
+
+      <button
+        type="button"
+        onClick={onLogout}
+        className="flex w-full items-center gap-3 px-5 py-3 text-left text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+      >
+        <LogOut className="h-4 w-4 text-slate-500" />
+        Log Out
+      </button>
+
+      <div className="mt-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
+        <p className="text-sm font-black text-blue-700">{platformName} Pro</p>
+        <p className="mt-1 text-xs font-semibold text-slate-600">Verified learning, quizzes, and certificates</p>
+      </div>
+    </div>
+  );
+}
+
+function HeaderLink({ to, children }: { to: string; children: ReactNode }) {
+  return (
+    <NavLink
+      to={to}
+      className={({ isActive }) =>
+        [
+          "rounded-full px-4 py-2 text-sm font-bold transition",
+          isActive ? "bg-accent-500 text-white shadow-sm shadow-accent-500/20" : "text-brand-700 hover:bg-brand-50",
+        ].join(" ")
+      }
+    >
+      {children}
+    </NavLink>
+  );
+}
+
+function MobileLink({ to, children, onClick }: { to: string; children: ReactNode; onClick: () => void }) {
+  return (
+    <NavLink
+      to={to}
+      onClick={onClick}
+      className={({ isActive }) =>
+        [
+          "rounded-2xl px-4 py-3 text-sm font-bold transition",
+          isActive ? "bg-accent-500 text-white" : "text-brand-700 hover:bg-brand-50",
+        ].join(" ")
+      }
+    >
+      {children}
+    </NavLink>
+  );
+}
+
+function DropdownLink({
+  to,
+  icon,
+  children,
+  onClick,
+}: {
+  to: string;
+  icon: ReactNode;
+  children: ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-brand-700 transition hover:bg-brand-50"
+    >
+      <span className="text-brand-600">{icon}</span>
+      {children}
+    </Link>
+  );
+}
+
+function UserAvatar({ name }: { name: string }) {
+  const initials = name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+
+  return (
+    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-700 text-sm font-black text-white">
+      {initials || "A"}
+    </span>
+  );
+}

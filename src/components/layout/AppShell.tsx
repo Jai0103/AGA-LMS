@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
   Award,
   ChevronDown,
+  FileText,
   HelpCircle,
   Inbox,
   LayoutDashboard,
@@ -169,6 +170,9 @@ export function AppShell() {
                     <MobileLink to="/certificates" onClick={() => setIsMobileOpen(false)}>
                       Certificates
                     </MobileLink>
+                    <MobileLink to="/transcript" onClick={() => setIsMobileOpen(false)}>
+                      Transcript
+                    </MobileLink>
                     <MobileLink to="/profile" onClick={() => setIsMobileOpen(false)}>
                       Settings
                     </MobileLink>
@@ -279,6 +283,9 @@ function AccountDropdown({
       </DropdownLink>
       <DropdownLink to="/certificates" icon={<Award className="h-4 w-4" />} onClick={onNavigate}>
         Certificates
+      </DropdownLink>
+      <DropdownLink to="/transcript" icon={<FileText className="h-4 w-4" />} onClick={onNavigate}>
+        Transcript
       </DropdownLink>
       <DropdownLink to="/profile" icon={<Settings className="h-4 w-4" />} onClick={onNavigate}>
         Settings

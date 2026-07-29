@@ -20,6 +20,7 @@ import { CertificatesPage } from "./pages/CertificatesPage";
 import { CourseDetailsPage } from "./pages/CourseDetailsPage";
 import { CoursePlayerPage } from "./pages/CoursePlayerPage";
 import { ForgotPasswordPage } from "./pages/ForgotPasswordPage";
+import { HelpCenterPage } from "./pages/HelpCenterPage";
 import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
@@ -42,6 +43,7 @@ function App() {
             <Route path="/certificate-policy" element={<CertificatePolicyPage />} />
             <Route path="/verify-certificate" element={<CertificateVerificationPage />} />
             <Route path="/verify-certificate/:certificateCode" element={<CertificateVerificationPage />} />
+            <Route path="/help" element={<HelpCenterPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password/:token" element={<ResetPasswordPage />} />

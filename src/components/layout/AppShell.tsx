@@ -4,6 +4,7 @@ import {
   Award,
   ChevronDown,
   HelpCircle,
+  Inbox,
   LayoutDashboard,
   LogOut,
   Megaphone,
@@ -171,6 +172,9 @@ export function AppShell() {
                     <MobileLink to="/profile" onClick={() => setIsMobileOpen(false)}>
                       Settings
                     </MobileLink>
+                    <MobileLink to="/support" onClick={() => setIsMobileOpen(false)}>
+                      Support
+                    </MobileLink>
                     {isAdmin ? (
                       <>
                         <MobileLink to="/admin" onClick={() => setIsMobileOpen(false)}>
@@ -178,6 +182,9 @@ export function AppShell() {
                         </MobileLink>
                         <MobileLink to="/admin/settings" onClick={() => setIsMobileOpen(false)}>
                           Platform Settings
+                        </MobileLink>
+                        <MobileLink to="/admin/support" onClick={() => setIsMobileOpen(false)}>
+                          Support Inbox
                         </MobileLink>
                       </>
                     ) : null}
@@ -270,6 +277,9 @@ function AccountDropdown({
       <DropdownLink to="/profile" icon={<Settings className="h-4 w-4" />} onClick={onNavigate}>
         Settings
       </DropdownLink>
+      <DropdownLink to="/support" icon={<HelpCircle className="h-4 w-4" />} onClick={onNavigate}>
+        Support
+      </DropdownLink>
       {isAdmin ? (
         <DropdownLink to="/admin" icon={<ShieldCheck className="h-4 w-4" />} onClick={onNavigate}>
           Admin Dashboard
@@ -286,6 +296,11 @@ function AccountDropdown({
       <DropdownLink to="/certificate-policy" icon={<Award className="h-4 w-4" />} onClick={onNavigate}>
         Certificate Policy
       </DropdownLink>
+      {isAdmin ? (
+        <DropdownLink to="/admin/support" icon={<Inbox className="h-4 w-4" />} onClick={onNavigate}>
+          Support Inbox
+        </DropdownLink>
+      ) : null}
       <DropdownLink to="/help" icon={<HelpCircle className="h-4 w-4" />} onClick={onNavigate}>
         Help Center
       </DropdownLink>

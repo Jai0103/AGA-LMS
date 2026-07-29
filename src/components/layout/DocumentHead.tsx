@@ -10,6 +10,7 @@ const pageTitles: Record<string, string> = {
   "/forgot-password": "Reset Password",
   "/dashboard": "Student Dashboard",
   "/profile": "Profile Settings",
+  "/support": "Support",
   "/certificates": "Certificates",
   "/certificate-policy": "Certificate Policy",
   "/verify-certificate": "Certificate Verification",
@@ -22,6 +23,7 @@ const pageTitles: Record<string, string> = {
   "/admin/enrolments": "Admin Enrolments",
   "/admin/reports": "Admin Reports",
   "/admin/settings": "Platform Settings",
+  "/admin/support": "Support Inbox",
 };
 
 export function DocumentHead() {

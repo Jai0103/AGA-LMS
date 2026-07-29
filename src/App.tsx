@@ -12,6 +12,7 @@ import { AdminQuizPage } from "./pages/AdminQuizPage";
 import { AdminReportsPage } from "./pages/AdminReportsPage";
 import { AdminResourcesPage } from "./pages/AdminResourcesPage";
 import { AdminSettingsPage } from "./pages/AdminSettingsPage";
+import { AdminSupportPage } from "./pages/AdminSupportPage";
 import { AdminUsersPage } from "./pages/AdminUsersPage";
 import { CataloguePage } from "./pages/CataloguePage";
 import { CertificateVerificationPage } from "./pages/CertificateVerificationPage";
@@ -30,6 +31,7 @@ import { QuizPage } from "./pages/QuizPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { StudentDashboardPage } from "./pages/StudentDashboardPage";
+import { SupportPage } from "./pages/SupportPage";
 import { TermsPage } from "./pages/TermsPage";
 
 function App() {
@@ -67,6 +69,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/support"
+              element={
+                <ProtectedRoute>
+                  <SupportPage />
                 </ProtectedRoute>
               }
             />
@@ -184,6 +195,15 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={["ADMIN"]}>
                   <AdminSettingsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/admin/support"
+              element={
+                <ProtectedRoute allowedRoles={["ADMIN"]}>
+                  <AdminSupportPage />
                 </ProtectedRoute>
               }
             />

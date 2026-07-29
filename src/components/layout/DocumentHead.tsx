@@ -13,6 +13,7 @@ const pageTitles: Record<string, string> = {
   "/certificates": "Certificates",
   "/certificate-policy": "Certificate Policy",
   "/verify-certificate": "Certificate Verification",
+  "/help": "Help Center",
   "/admin": "Admin Dashboard",
   "/admin/users": "Admin Users",
   "/admin/courses": "Admin Courses",

@@ -25,10 +25,12 @@ import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { PrivacyPage } from "./pages/PrivacyPage";
 import { QuizPage } from "./pages/QuizPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { StudentDashboardPage } from "./pages/StudentDashboardPage";
+import { TermsPage } from "./pages/TermsPage";
 
 function App() {
   return (
@@ -44,6 +46,8 @@ function App() {
             <Route path="/verify-certificate" element={<CertificateVerificationPage />} />
             <Route path="/verify-certificate/:certificateCode" element={<CertificateVerificationPage />} />
             <Route path="/help" element={<HelpCenterPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password/:token" element={<ResetPasswordPage />} />

@@ -34,6 +34,7 @@ import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { StudentDashboardPage } from "./pages/StudentDashboardPage";
 import { SupportPage } from "./pages/SupportPage";
 import { TermsPage } from "./pages/TermsPage";
+import { TranscriptPage } from "./pages/TranscriptPage";
 import { UpdatesPage } from "./pages/UpdatesPage";
 
 function App() {
@@ -81,6 +82,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <SupportPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/transcript"
+              element={
+                <ProtectedRoute>
+                  <TranscriptPage />
                 </ProtectedRoute>
               }
             />

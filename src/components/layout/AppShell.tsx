@@ -117,7 +117,6 @@ export function AppShell() {
                     <AccountDropdown
                       isAdmin={isAdmin}
                       platformName={settings.platformName}
-                      supportEmail={settings.supportEmail}
                       onLogout={handleLogout}
                       onNavigate={() => setIsAccountOpen(false)}
                     />
@@ -182,12 +181,13 @@ export function AppShell() {
                         </MobileLink>
                       </>
                     ) : null}
-                    <a
-                      href={`mailto:${settings.supportEmail}`}
+                    <Link
+                      to="/help"
+                      onClick={() => setIsMobileOpen(false)}
                       className="rounded-2xl px-4 py-3 text-sm font-bold text-brand-700 hover:bg-brand-50"
                     >
                       Help Center
-                    </a>
+                    </Link>
                     <button
                       type="button"
                       onClick={handleLogout}
@@ -242,13 +242,11 @@ export function AppShell() {
 function AccountDropdown({
   isAdmin,
   platformName,
-  supportEmail,
   onLogout,
   onNavigate,
 }: {
   isAdmin: boolean;
   platformName: string;
-  supportEmail: string;
   onLogout: () => void;
   onNavigate: () => void;
 }) {
@@ -279,13 +277,9 @@ function AccountDropdown({
       <DropdownLink to="/certificate-policy" icon={<Award className="h-4 w-4" />} onClick={onNavigate}>
         Certificate Policy
       </DropdownLink>
-      <a
-        href={`mailto:${supportEmail}`}
-        className="flex items-center gap-3 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
-      >
-        <HelpCircle className="h-4 w-4 text-slate-500" />
+      <DropdownLink to="/help" icon={<HelpCircle className="h-4 w-4" />} onClick={onNavigate}>
         Help Center
-      </a>
+      </DropdownLink>
 
       <button
         type="button"

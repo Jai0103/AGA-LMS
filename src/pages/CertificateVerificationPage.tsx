@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Award, CheckCircle2, ExternalLink, Search, ShieldCheck, XCircle } from "lucide-react";
 import { usePlatformSettings } from "../context/PlatformSettingsContext";
 import { verifyCertificate } from "../lib/certificateVerificationApi";
@@ -61,6 +61,12 @@ export function CertificateVerificationPage() {
             <p className="max-w-2xl text-base leading-7 text-slate-600">
               Enter the certificate code shown on the PDF to confirm that it was issued after backend validation of course completion and quiz eligibility.
             </p>
+            <Link
+              to="/certificate-policy"
+              className="inline-flex text-sm font-black text-brand-700 transition hover:text-accent-600"
+            >
+              Read completion and certificate policy
+            </Link>
           </div>
 
           <form onSubmit={handleSubmit} className="flex max-w-2xl flex-col gap-3 sm:flex-row">
